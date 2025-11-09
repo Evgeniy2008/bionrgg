@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід | Доступ до вашого профілю | Bionrgg</title>
+    <meta name="description" content="Увійдіть до вашого профілю Bionrgg для керування вашою цифровою візитівкою та поширення всіх ваших соціальних мереж в одному місці.">
+    <meta name="keywords" content="вхід, авторизація, цифрова візитівка, соціальні мережі, Bionrgg">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Bionrgg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://bionrgg.com/login.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Вхід | Доступ до вашого профілю | Bionrgg">
+    <meta property="og:description" content="Увійдіть для керування вашою цифровою візитівкою та додавання посилань на соціальні мережі.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bionrgg.com/login.html">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <link rel="apple-touch-icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/forms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="nav-brand">
+                <img src="assets/img/favicon.png" alt="Bionrgg" class="nav-logo">
+                <span class="nav-title">Bionrgg</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Головна</a>
+                <a href="login.html" class="nav-link nav-cta active">Вхід</a>
+                <a href="create.html" class="nav-link">Створити профіль</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="login-form">
+                <div class="login-header">
+                    <h1 class="login-title">Вхід до Bionrgg</h1>
+                    <p class="login-subtitle">Керуйте вашою цифровою візитівкою та об'єднайте всі соціальні мережі в одному місці.</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Ім'я користувача</label>
+                        <input type="text" id="username" name="username" class="form-input" required autocomplete="username">
+                        <div class="form-error" id="usernameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password">
+                        <div class="form-error" id="passwordError"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <span>Увійти</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10,17 15,12 10,7"/>
+                                <line x1="15" y1="12" x2="3" y2="12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="form-toggle">
+                    <p><span>Немає облікового запису?</span> <a href="create.html">Створити профіль</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/img/favicon.png" alt="Bionrgg" class="footer-logo">
+                    <span class="footer-title">Bionrgg</span>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">Головна</a>
+                    <a href="login.html" class="footer-link" id="footerLoginLink">Вхід</a>
+                    <a href="create.html" class="footer-link" id="footerCreateLink">Створити</a>
+                    <a href="my-profile.html" class="footer-link" id="footerMyProfileLink" style="display: none;">Мій профіль</a>
+                    <a href="#" class="footer-link" id="footerLogoutLink" style="display: none;" onclick="logout()">Вихід</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bionrgg. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/language.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/forms.js"></script>
+    <script>
+        // Update footer buttons based on auth status
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFooterButtons();
+        });
+        
+        function updateFooterButtons() {
+            const userID = localStorage.getItem('userID');
+            const password = localStorage.getItem('password');
+            const isAuthenticated = userID && password;
+            
+            const footerLoginLink = document.getElementById('footerLoginLink');
+            const footerCreateLink = document.getElementById('footerCreateLink');
+            const footerMyProfileLink = document.getElementById('footerMyProfileLink');
+            const footerLogoutLink = document.getElementById('footerLogoutLink');
+            
+            if (isAuthenticated) {
+                if (footerLoginLink) footerLoginLink.style.display = 'none';
+                if (footerCreateLink) footerCreateLink.style.display = 'none';
+                if (footerMyProfileLink) footerMyProfileLink.style.display = 'inline-block';
+                if (footerLogoutLink) footerLogoutLink.style.display = 'inline-block';
+            } else {
+                if (footerLoginLink) footerLoginLink.style.display = 'inline-block';
+                if (footerCreateLink) footerCreateLink.style.display = 'inline-block';
+                if (footerMyProfileLink) footerMyProfileLink.style.display = 'none';
+                if (footerLogoutLink) footerLogoutLink.style.display = 'none';
+            }
+        }
+        
+        // Listen for storage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'userID' || e.key === 'password') {
+                updateFooterButtons();
+            }
+        });
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('userID');
+            localStorage.removeItem('password');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

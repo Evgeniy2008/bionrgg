@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /my-profile.html
+Disallow: /login.html
+Disallow: /create.html
+
+# Sitemap
+Sitemap: https://bionrgg.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1 

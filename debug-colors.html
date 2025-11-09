@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Colors</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-section { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .color-input { width: 100px; height: 40px; margin: 5px; }
+        .debug-output { background: #000; color: #0f0; padding: 10px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Debug Color Values</h1>
+    
+    <div class="debug-section">
+        <h3>Color Inputs</h3>
+        <div>
+            <label>Profile Color:</label>
+            <input type="color" id="profileColor" class="color-input" value="#ffffff">
+            <span id="profileColorValue">#ffffff</span>
+        </div>
+        <div>
+            <label>Text Color:</label>
+            <input type="color" id="textColor" class="color-input" value="#000000">
+            <span id="textColorValue">#000000</span>
+        </div>
+        <div>
+            <label>Social BG Color:</label>
+            <input type="color" id="socialBgColor" class="color-input" value="#000000">
+            <span id="socialBgColorValue">#000000</span>
+        </div>
+        <div>
+            <label>Social Text Color:</label>
+            <input type="color" id="socialTextColor" class="color-input" value="#ffffff">
+            <span id="socialTextColorValue">#ffffff</span>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Test Form Submission</h3>
+        <button onclick="testFormData()">Test Form Data Creation</button>
+        <button onclick="testAPI()">Test API Call</button>
+    </div>
+
+    <div class="debug-section">
+        <h3>Debug Output</h3>
+        <div id="debugOutput" class="debug-output">Click "Test Form Data Creation" to see what would be sent...</div>
+    </div>
+
+    <script>
+        // Update color value displays
+        document.getElementById('profileColor').addEventListener('input', function() {
+            document.getElementById('profileColorValue').textContent = this.value;
+        });
+        document.getElementById('textColor').addEventListener('input', function() {
+            document.getElementById('textColorValue').textContent = this.value;
+        });
+        document.getElementById('socialBgColor').addEventListener('input', function() {
+            document.getElementById('socialBgColorValue').textContent = this.value;
+        });
+        document.getElementById('socialTextColor').addEventListener('input', function() {
+            document.getElementById('socialTextColorValue').textContent = this.value;
+        });
+
+        function testFormData() {
+            const formData = new FormData();
+            
+            // Simulate the same fields as in my-profile.js
+            const fields = [
+                'description', 'profileColor', 'textColor', 'profileOpacity', 'textOpacity',
+                'socialBgColor', 'socialTextColor', 'socialOpacity'
+            ];
+            
+            // Add some test values
+            formData.append('username', 'testuser');
+            formData.append('userID', 'test123');
+            formData.append('password', 'testpass');
+            formData.append('description', 'Test description');
+            formData.append('profileOpacity', '100');
+            formData.append('textOpacity', '100');
+            formData.append('socialOpacity', '90');
+            
+            // Add color values from inputs
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) {
+                    const value = input.value || '';
+                    formData.append(field, value);
+                    console.log(`Adding ${field}: ${value}`);
+                }
+            });
+            
+            // Display what would be sent
+            let output = "FormData contents:\n";
+            for (let [key, value] of formData.entries()) {
+                output += `${key}: ${value}\n`;
+            }
+            
+            document.getElementById('debugOutput').textContent = output;
+        }
+
+        async function testAPI() {
+            const formData = new FormData();
+            
+            // Add authentication
+            formData.append('username', 'testuser');
+            formData.append('userID', 'test123');
+            formData.append('password', 'testpass');
+            
+            // Add color values
+            formData.append('profileColor', document.getElementById('profileColor').value);
+            formData.append('textColor', document.getElementById('textColor').value);
+            formData.append('socialBgColor', document.getElementById('socialBgColor').value);
+            formData.append('socialTextColor', document.getElementById('socialTextColor').value);
+            formData.append('profileOpacity', '100');
+            formData.append('textOpacity', '100');
+            formData.append('socialOpacity', '90');
+            formData.append('description', 'Test description');
+            
+            try {
+                const response = await fetch('api/update-profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const responseText = await response.text();
+                document.getElementById('debugOutput').textContent = "API Response:\n" + responseText;
+            } catch (error) {
+                document.getElementById('debugOutput').textContent = "API Error:\n" + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

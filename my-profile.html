@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій профіль | Редагуйте вашу цифрову візитівку | Bionrgg</title>
+    <meta name="description" content="Керуйте та редагуйте вашу цифрову візитівку на Bionrgg. Налаштуйте ваш профіль та об'єднайте всі соціальні мережі в одному місці.">
+    <meta name="keywords" content="редагувати профіль, керувати профілем, цифрова візитівка, посилання соціальних мереж, Bionrgg">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Bionrgg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://bionrgg.com/my-profile.html">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <link rel="apple-touch-icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/forms.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="assets/css/my-profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="my-profile-page">
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'employee') {
+                document.body.dataset.profileMode = 'employee';
+                document.body.classList.add('employee-mode');
+            }
+        })();
+    </script>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="nav-brand">
+                <img src="assets/img/favicon.png" alt="Bionrgg" class="nav-logo">
+                <span class="nav-title">Bionrgg</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Головна</a>
+                <a href="login.html" class="nav-link">Вхід</a>
+                <a href="create.html" class="nav-link nav-cta">Створити профіль</a>
+                <a href="my-profile.html" class="nav-link">Мій профіль</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="my-profile-layout">
+                <!-- Profile Preview -->
+                <div class="profile-preview-section" style="position: static;">
+                    <div class="preview-header">
+                        <h2>Перегляд профілю</h2>
+                        <p>Подивіться, як ваш профіль виглядає для інших</p>
+                        <button type="button" id="editProfileBtn" class="btn btn-primary btn-large" style="margin-top: 1rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Редагувати профіль
+                        </button>
+                    </div>
+                    <div class="profile-share-panel">
+                        <div class="profile-share-item">
+                            <div class="profile-share-title">
+                                <span class="profile-share-icon">🔗</span>
+                                <span>Посилання на профіль</span>
+                            </div>
+                            <div class="profile-share-content">
+                                <div class="profile-share-input">
+                                    <input type="text" id="profileLink" name="profileLink" class="form-input" readonly>
+                                    <button type="button" id="copyLinkBtn" class="btn btn-secondary">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                        Копіювати
+                                    </button>
+                                </div>
+                                <small class="profile-share-help">Поділіться цим посиланням, щоб показати ваш профіль іншим</small>
+                            </div>
+                        </div>
+                        <div class="profile-share-item">
+                            <div class="profile-share-title">
+                                <span class="profile-share-icon">📱</span>
+                                <span>QR код профілю</span>
+                            </div>
+                            <div class="profile-share-content profile-share-content--center">
+                                <div class="profile-share-qr" id="qrCodeContainer">
+                                    <canvas id="qrCodeCanvas" style="display: none;"></canvas>
+                                    <div id="qrCodeDisplay">
+                                        <p>QR код буде згенеровано автоматично</p>
+                                    </div>
+                                </div>
+                                <button type="button" id="downloadQRBtn" class="btn btn-secondary" style="display: none;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Завантажити QR код
+                                </button>
+                                <small class="profile-share-help">Відскануйте QR код, щоб відкрити ваш профіль</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-preview-container profile-container" id="profilePreviewContainer">
+                        <div class="profile-preview-card profile-card" id="profilePreviewCard">
+                            <div class="profile-preview-header profile-header">
+                                <div class="profile-preview-avatar profile-avatar" id="previewAvatar">
+                                    <img src="assets/img/profile.png" alt="Avatar" id="previewAvatarImg">
+                                </div>
+                                <div class="profile-preview-info profile-info">
+                                    <h1 class="profile-preview-name profile-name" id="previewName">Завантаження...</h1>
+                                    <p class="profile-preview-description profile-description" id="previewDescription">Завантаження...</p>
+                                    <div class="preview-company-identity" id="previewCompanyIdentity" style="display: none;">
+                                        <div class="preview-company-logo" id="previewCompanyLogoWrapper">
+                                            <img id="previewCompanyLogo" alt="Company logo">
+                                        </div>
+                                        <div class="preview-company-text">
+                                            <span class="preview-company-name" id="previewCompanyName"></span>
+                                            <span class="preview-company-tagline" id="previewCompanyTagline"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-preview-links profile-links" id="previewLinks">
+                                <!-- Preview links will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Editor -->
+                <div class="profile-editor-section" id="profileEditorSection" style="display: none;">
+                    <div class="editor-header">
+                        <h2>Редагувати профіль</h2>
+                        <p>Налаштуйте вашу цифрову візитівку</p>
+                    </div>
+
+                    <form class="profile-form" id="profileForm" enctype="multipart/form-data">
+                        <!-- Basic Information -->
+                        <div class="form-section" data-design-section="true">
+                            <h3>Основна інформація</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="username" class="form-label">Ім'я користувача</label>
+                                    <div class="username-display">
+                                        <span id="usernameDisplay" class="username-text">Завантаження...</span>
+                                </div>
+                                    <small class="form-help">Це URL вашого профілю</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="form-label">Опис</label>
+                                    <textarea id="description" name="description" class="form-textarea" rows="3" maxlength="500" placeholder="Розкажіть про себе..."></textarea>
+                                    <div class="form-counter">
+                                        <span id="charCount">0</span>/500
+                                </div>
+                                </div>
+                                <div class="form-group" id="companyPositionGroup" style="display: none;">
+                                    <label for="companyPosition" class="form-label">Посада в компанії</label>
+                                    <input type="text" id="companyPosition" name="companyPosition" class="form-input" maxlength="80" placeholder="Наприклад: Маркетолог">
+                                    <small class="form-help">Відображається у візитках поруч з назвою компанії</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avatar -->
+                        <div class="form-section">
+                            <h3>Аватар</h3>
+                            <div class="form-group">
+                                <label for="avatar" class="form-label">Фото профілю</label>
+                                <div class="file-upload">
+                                    <input type="file" id="avatar" name="avatar" class="file-input" accept="image/*">
+                                    <label for="avatar" class="file-label">
+                                        <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7,10 12,15 17,10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                        <span class="file-text">Вибрати зображення</span>
+                                    </label>
+                                </div>
+                                </div>
+                            </div>
+
+                        <!-- Background & Design -->
+                        <div class="form-section">
+                            <h3>Фон та дизайн</h3>
+                            <div class="form-row">
+                            <div class="form-group">
+                                    <label for="background" class="form-label">Фон сторінки</label>
+                                <div class="file-upload">
+                                    <input type="file" id="background" name="background" class="file-input" accept="image/*">
+                                    <label for="background" class="file-label">
+                                        <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7,10 12,15 17,10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                            <span class="file-text">Вибрати зображення</span>
+                                        </label>
+                                    </div>
+                                    <small class="form-help">Фон для всієї сторінки</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blockImage" class="form-label">Фон блоку</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="blockImage" name="blockImage" class="file-input" accept="image/*">
+                                        <label for="blockImage" class="file-label">
+                                            <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                <polyline points="7,10 12,15 17,10"/>
+                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                            </svg>
+                                            <span class="file-text">Вибрати зображення</span>
+                                        </label>
+                                    </div>
+                                    <small class="form-help">Фон для блоку профілю</small>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Фон блоку</label>
+                                    <div class="toggle-group">
+                                        <button type="button" class="toggle-btn active" data-type="color" data-target="profileBgType">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <circle cx="12" cy="12" r="3"/>
+                                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                                            </svg>
+                                            Колір
+                                        </button>
+                                        <button type="button" class="toggle-btn" data-type="image" data-target="profileBgType">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                                <polyline points="21,15 16,10 5,21"/>
+                                            </svg>
+                                            Зображення
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="profileBgColorGroup">
+                                    <label for="profileColor" class="form-label">Колір блоку</label>
+                                    <input type="color" id="profileColor" name="profileColor" class="form-color" value="#2563eb">
+                                    <div class="form-slider-group">
+                                        <label for="profileOpacity" class="form-slider-label">Прозорість</label>
+                                        <input type="range" id="profileOpacity" name="profileOpacity" class="form-slider" min="2" max="100" value="100">
+                                        <span class="form-slider-value" id="profileOpacityValue">100%</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="profileBgImageGroup" style="display: none;">
+                                    <label for="blockImage2" class="form-label">Зображення блоку</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="blockImage2" name="blockImage" class="file-input" accept="image/*">
+                                        <label for="blockImage2" class="file-label">
+                                            <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                <polyline points="7,10 12,15 17,10"/>
+                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                            </svg>
+                                            <span class="file-text">Вибрати зображення</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="textColor" class="form-label">Колір тексту</label>
+                                    <input type="color" id="textColor" name="textColor" class="form-color" value="#111827">
+                                    <div class="form-slider-group">
+                                        <label for="textOpacity" class="form-slider-label">Прозорість</label>
+                                        <input type="range" id="textOpacity" name="textOpacity" class="form-slider" min="2" max="100" value="100">
+                                        <span class="form-slider-value" id="textOpacityValue">100%</span>
+                                    </div>
+                                    <small class="form-help">Колір для тексту в блоці профілю</small>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-checkbox-group">
+                                        <input type="checkbox" id="enableTextBg" name="enableTextBg" class="form-checkbox">
+                                        <label for="enableTextBg" class="form-checkbox-label">Увімкнути фон тексту</label>
+                                    </div>
+                                    <div id="textBgColorGroup" style="display: none;">
+                                        <label for="textBgColor" class="form-label">Колір фону тексту</label>
+                                        <input type="color" id="textBgColor" name="textBgColor" class="form-color" value="">
+                                        <div class="form-slider-group">
+                                            <label for="textBgOpacity" class="form-slider-label">Прозорість</label>
+                                            <input type="range" id="textBgOpacity" name="textBgOpacity" class="form-slider" min="2" max="100" value="100">
+                                            <span class="form-slider-value" id="textBgOpacityValue">100%</span>
+                                        </div>
+                                    </div>
+                                    <small class="form-help">Колір фону для тексту (опціонально, якщо текст зливається з фоном)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Join Company Section (if user is not in a company) -->
+                        <div class="form-section" id="joinCompanySection" style="display: none;">
+                            <h3>Приєднатися до компанії</h3>
+                            <div class="form-group">
+                                <label for="companyKeyInput" class="form-label">Ключ компанії</label>
+                                <div class="form-input-group">
+                                    <input type="text" id="companyKeyInput" class="form-input" placeholder="Введіть ключ компанії" maxlength="8" style="text-transform: uppercase;">
+                                    <button type="button" id="joinCompanyBtn" class="btn btn-primary">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="8.5" cy="7" r="4"/>
+                                            <line x1="20" y1="8" x2="20" y2="14"/>
+                                            <line x1="23" y1="11" x2="17" y2="11"/>
+                                        </svg>
+                                        Приєднатися
+                                    </button>
+                                </div>
+                                <small class="form-help">Отримайте ключ від власника компанії</small>
+                                <div class="form-error" id="joinCompanyError"></div>
+                            </div>
+                        </div>
+
+                        <!-- Company Management (if user is company owner/member) -->
+                        <div class="form-section" id="companySection" style="display: none;">
+                            <h3>Управління компанією</h3>
+                            <div id="companyInfo" class="company-info">
+                                <!-- Company info will be loaded here -->
+                            </div>
+                        </div>
+
+                            <!-- Social Media Links -->
+                            <div class="social-media-subsection">
+                                <h4>Посилання на соціальні мережі</h4>
+                                
+                                <!-- Social Media Customization -->
+                                <div class="social-customization" data-design-section="true">
+                                    <h5>Стилізація посилань</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label class="form-label">Фон посилань</label>
+                                            <div class="toggle-group">
+                                                <button type="button" class="toggle-btn active" data-type="color" data-target="socialBgType">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <circle cx="12" cy="12" r="3"/>
+                                                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                                                    </svg>
+                                                    Колір
+                                                </button>
+                                                <button type="button" class="toggle-btn" data-type="image" data-target="socialBgType">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                                        <polyline points="21,15 16,10 5,21"/>
+                                                    </svg>
+                                                    Зображення
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="socialBgColorGroup">
+                                            <label for="socialBgColor" class="form-label">Колір фону</label>
+                                            <input type="color" id="socialBgColor" name="socialBgColor" class="form-color" value="#ffffff">
+                                        </div>
+                                        <div class="form-group" id="socialBgImageGroup" style="display: none;">
+                                            <label for="socialBgImage" class="form-label">Зображення фону</label>
+                                            <div class="file-upload">
+                                                <input type="file" id="socialBgImage" name="socialBgImage" class="file-input" accept="image/*">
+                                                <label for="socialBgImage" class="file-label">
+                                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                        <polyline points="7,10 12,15 17,10"/>
+                                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                                    </svg>
+                                                    <span class="file-text">Вибрати зображення</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="socialTextColor" class="form-label">Колір тексту</label>
+                                            <input type="color" id="socialTextColor" name="socialTextColor" class="form-color" value="#111827">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="socialOpacity" class="form-label">Прозорість</label>
+                                            <div class="form-slider-group">
+                                                <input type="range" id="socialOpacity" name="socialOpacity" class="form-slider" min="2" max="100" value="90">
+                                                <span class="form-slider-value" id="socialOpacityValue">90%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Popular Platforms -->
+                                <div class="social-category">
+                                    <h5>Popular Platforms</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="instagram" class="form-label">
+                                                <img src="assets/img/insta.png" alt="Instagram" class="form-icon">
+                                                Instagram
+                                            </label>
+                                            <input type="url" id="instagram" name="instagram" class="form-input" placeholder="https://instagram.com/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="youtube" class="form-label">
+                                                <img src="assets/img/youtube.png" alt="YouTube" class="form-icon">
+                                                YouTube
+                                            </label>
+                                            <input type="url" id="youtube" name="youtube" class="form-input" placeholder="https://youtube.com/@username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="youtubeMusic" class="form-label">
+                                                <img src="assets/img/youtubeMusic.png" alt="YouTube Music" class="form-icon">
+                                                YouTube Music
+                                            </label>
+                                            <input type="url" id="youtubeMusic" name="youtubeMusic" class="form-input" placeholder="https://music.youtube.com/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tiktok" class="form-label">
+                                                <img src="assets/img/tiktok.png" alt="TikTok" class="form-icon">
+                                                TikTok
+                                            </label>
+                                            <input type="url" id="tiktok" name="tiktok" class="form-input" placeholder="https://tiktok.com/@username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="facebook" class="form-label">
+                                                <img src="assets/img/facebook.png" alt="Facebook" class="form-icon">
+                                                Facebook
+                                            </label>
+                                            <input type="url" id="facebook" name="facebook" class="form-input" placeholder="https://facebook.com/username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="x" class="form-label">
+                                                <img src="assets/img/x.png" alt="X (Twitter)" class="form-icon">
+                                                X (Twitter)
+                                            </label>
+                                            <input type="url" id="x" name="x" class="form-input" placeholder="https://x.com/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="linkedin" class="form-label">
+                                                <img src="assets/img/linkedin.png" alt="LinkedIn" class="form-icon">
+                                                LinkedIn
+                                            </label>
+                                            <input type="url" id="linkedin" name="linkedin" class="form-input" placeholder="https://linkedin.com/in/username">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Messaging & Chats -->
+                                <div class="social-category">
+                                    <h5>Messaging & Chats</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="telegram" class="form-label">
+                                                <img src="assets/img/tg.png" alt="Telegram" class="form-icon">
+                                                Telegram
+                                            </label>
+                                            <input type="url" id="telegram" name="telegram" class="form-input" placeholder="https://t.me/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="whatsapp" class="form-label">
+                                                <img src="assets/img/whatsapp.png" alt="WhatsApp" class="form-icon">
+                                                WhatsApp
+                                            </label>
+                                            <input type="url" id="whatsapp" name="whatsapp" class="form-input" placeholder="https://wa.me/phone">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="viber" class="form-label">
+                                                <img src="assets/img/viber.png" alt="Viber" class="form-icon">
+                                                Viber
+                                            </label>
+                                            <input type="url" id="viber" name="viber" class="form-input" placeholder="https://chats.viber.com/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="discord" class="form-label">
+                                                <img src="assets/img/discord.png" alt="Discord" class="form-icon">
+                                                Discord
+                                            </label>
+                                            <input type="url" id="discord" name="discord" class="form-input" placeholder="https://discord.gg/server">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gaming & Streaming -->
+                                <div class="social-category">
+                                    <h5>Gaming & Streaming</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="twitch" class="form-label">
+                                                <img src="assets/img/twitch.png" alt="Twitch" class="form-icon">
+                                                Twitch
+                                            </label>
+                                            <input type="url" id="twitch" name="twitch" class="form-input" placeholder="https://twitch.tv/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="steam" class="form-label">
+                                                <img src="assets/img/steam.png" alt="Steam" class="form-icon">
+                                                Steam
+                                            </label>
+                                            <input type="url" id="steam" name="steam" class="form-input" placeholder="https://steamcommunity.com/id/username">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Music & Audio -->
+                                <div class="social-category">
+                                    <h5>Music & Audio</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="spotify" class="form-label">
+                                                <img src="assets/img/spotify.png" alt="Spotify" class="form-icon">
+                                                Spotify
+                                            </label>
+                                            <input type="url" id="spotify" name="spotify" class="form-input" placeholder="https://open.spotify.com/user/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="soundcloud" class="form-label">
+                                                <img src="assets/img/soundcloud.png" alt="SoundCloud" class="form-icon">
+                                                SoundCloud
+                                            </label>
+                                            <input type="url" id="soundcloud" name="soundcloud" class="form-input" placeholder="https://soundcloud.com/username">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Development & Tech -->
+                                <div class="social-category">
+                                    <h5>Development & Tech</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="github" class="form-label">
+                                                <img src="assets/img/github.png" alt="GitHub" class="form-icon">
+                                                GitHub
+                                            </label>
+                                            <input type="url" id="github" name="github" class="form-input" placeholder="https://github.com/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="site" class="form-label">
+                                                <img src="assets/img/site.png" alt="Website" class="form-icon">
+                                                Website
+                                            </label>
+                                            <input type="url" id="site" name="site" class="form-input" placeholder="https://yourwebsite.com">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Documents & Files -->
+                                <div class="social-category">
+                                    <h5>Документи та файли</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="googleDocs" class="form-label">
+                                                <img src="assets/img/google docs.png" alt="Google Docs" class="form-icon">
+                                                Google Docs
+                                            </label>
+                                            <input type="url" id="googleDocs" name="googleDocs" class="form-input" placeholder="https://docs.google.com/document/d/...">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="googleSheets" class="form-label">
+                                                <img src="assets/img/googlesheets.png" alt="Google Sheets" class="form-icon">
+                                                Google Sheets
+                                            </label>
+                                            <input type="url" id="googleSheets" name="googleSheets" class="form-input" placeholder="https://docs.google.com/spreadsheets/d/...">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="fileUpload" class="form-label">
+                                                <img src="assets/img/file.png" alt="File" class="form-icon">
+                                                Файл (презентації, документи)
+                                            </label>
+                                            <input type="text" id="fileUpload" name="fileUpload" class="form-input" placeholder="https://drive.google.com/file/d/... або залиште порожнім, щоб використати завантажений файл">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fileUploadInput" class="form-label">
+                                                <img src="assets/img/file.png" alt="File" class="form-icon">
+                                                Завантажити файл
+                                            </label>
+                                            <div class="file-upload">
+                                                <input type="file" id="fileUploadInput" name="fileUploadInput" class="file-input">
+                                                <label for="fileUploadInput" class="file-label">
+                                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                        <polyline points="7,10 12,15 17,10"/>
+                                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                                    </svg>
+                                                    <span class="file-text">Вибрати файл</span>
+                                                </label>
+                                            </div>
+                                            <small class="form-help">Максимальний розмір: 50MB. Ви можете завантажити файл будь-якого формату.</small>
+                                            <div class="form-help" id="fileUploadStatus"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Freelance & Work -->
+                                <div class="social-category">
+                                    <h5>Freelance & Work</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="upwork" class="form-label">
+                                                <img src="assets/img/upwork.png" alt="Upwork" class="form-icon">
+                                                Upwork
+                                            </label>
+                                            <input type="url" id="upwork" name="upwork" class="form-input" placeholder="https://upwork.com/freelancers/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fiverr" class="form-label">
+                                                <img src="assets/img/fiverr.png" alt="Fiverr" class="form-icon">
+                                                Fiverr
+                                            </label>
+                                            <input type="url" id="fiverr" name="fiverr" class="form-input" placeholder="https://fiverr.com/username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="djinni" class="form-label">
+                                                <img src="assets/img/djinni.png" alt="Djinni" class="form-icon">
+                                                Djinni
+                                            </label>
+                                            <input type="url" id="djinni" name="djinni" class="form-input" placeholder="https://djinni.co/username">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Other Platforms -->
+                                <div class="social-category">
+                                    <h5>Інші платформи</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="reddit" class="form-label">
+                                                <img src="assets/img/reddit.png" alt="Reddit" class="form-icon">
+                                                Reddit
+                                            </label>
+                                            <input type="url" id="reddit" name="reddit" class="form-input" placeholder="https://reddit.com/u/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="dou" class="form-label">
+                                                <img src="assets/img/dou.png" alt="DOU" class="form-icon">
+                                                DOU
+                                            </label>
+                                            <input type="url" id="dou" name="dou" class="form-input" placeholder="https://dou.ua/users/username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="olx" class="form-label">
+                                                <img src="assets/img/olx.png" alt="OLX" class="form-icon">
+                                                OLX
+                                            </label>
+                                            <input type="url" id="olx" name="olx" class="form-input" placeholder="https://www.olx.ua/profile/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="prom" class="form-label">
+                                                <img src="assets/img/prom.png" alt="Prom.ua" class="form-icon">
+                                                Prom.ua
+                                            </label>
+                                            <input type="url" id="prom" name="prom" class="form-input" placeholder="https://prom.ua/username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="amazon" class="form-label">
+                                                <img src="assets/img/amazon.png" alt="Amazon" class="form-icon">
+                                                Amazon
+                                            </label>
+                                            <input type="url" id="amazon" name="amazon" class="form-input" placeholder="https://amazon.com/shops/username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fhunt" class="form-label">
+                                                <img src="assets/img/fhunt.png" alt="FHunt" class="form-icon">
+                                                FHunt
+                                            </label>
+                                            <input type="url" id="fhunt" name="fhunt" class="form-input" placeholder="https://fhunt.com/username">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="dj" class="form-label">
+                                                <img src="assets/img/dj.png" alt="DJ" class="form-icon">
+                                                DJ
+                                            </label>
+                                            <input type="url" id="dj" name="dj" class="form-input" placeholder="https://dj.ua/username">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Banks -->
+                                <div class="social-category">
+                                    <h5>Банки</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="privatBank" class="form-label">
+                                                <img src="assets/img/privatBank.png" alt="ПриватБанк" class="form-icon">
+                                                ПриватБанк
+                                            </label>
+                                            <input type="text" id="privatBank" name="privatBank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="monoBank" class="form-label">
+                                                <img src="assets/img/monoBank.png" alt="Монобанк" class="form-icon">
+                                                Монобанк
+                                            </label>
+                                            <input type="text" id="monoBank" name="monoBank" class="form-input" placeholder="Номер картки">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="alfaBank" class="form-label">
+                                                <img src="assets/img/alfaBank.png" alt="Альфа-Банк" class="form-icon">
+                                                Альфа-Банк
+                                            </label>
+                                            <input type="text" id="alfaBank" name="alfaBank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="abank" class="form-label">
+                                                <img src="assets/img/abank.png" alt="А-Банк" class="form-icon">
+                                                А-Банк
+                                            </label>
+                                            <input type="text" id="abank" name="abank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="pumbBank" class="form-label">
+                                                <img src="assets/img/pumbBank.png" alt="ПУМБ" class="form-icon">
+                                                ПУМБ
+                                            </label>
+                                            <input type="text" id="pumbBank" name="pumbBank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="raiffeisenBank" class="form-label">
+                                                <img src="assets/img/raiffeisenBank.png" alt="Райффайзен Банк" class="form-icon">
+                                                Райффайзен Банк
+                                            </label>
+                                            <input type="text" id="raiffeisenBank" name="raiffeisenBank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="senseBank" class="form-label">
+                                                <img src="assets/img/senseBank.png" alt="Sense Bank" class="form-icon">
+                                                Sense Bank
+                                            </label>
+                                            <input type="text" id="senseBank" name="senseBank" class="form-input" placeholder="Номер картки або рахунку">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Cryptocurrency Exchanges -->
+                                <div class="social-category">
+                                    <h5>Криптобіржі</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="binance" class="form-label">
+                                                <img src="assets/img/binance.png" alt="Binance" class="form-icon">
+                                                Binance
+                                            </label>
+                                            <input type="text" id="binance" name="binance" class="form-input" placeholder="ID або посилання">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="trustWallet" class="form-label">
+                                                <img src="assets/img/trustWallet.png" alt="Trust Wallet" class="form-icon">
+                                                Trust Wallet
+                                            </label>
+                                            <input type="text" id="trustWallet" name="trustWallet" class="form-input" placeholder="Адреса гаманця">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                    
+                    <!-- Fixed Action Buttons -->
+                    <div class="fixed-actions">
+                        <button type="submit" form="profileForm" class="btn btn-primary btn-large">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17,21 17,13 7,13 7,21"/>
+                                <polyline points="7,3 7,8 15,8"/>
+                            </svg>
+                            Зберегти зміни
+                        </button>
+                        <button type="button" id="deleteProfileBtn" class="btn btn-danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="3,6 5,6 21,6"/>
+                                <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+                            </svg>
+                            Видалити профіль
+                        </button>
+                        <button type="button" id="closeEditorBtn" class="btn btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            Закрити редактор
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer onerror="console.error('Primary QRCode CDN failed')"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/forms.js"></script>
+    <script src="assets/js/my-profile.js"></script>
+    <script>
+        // Check authentication and redirect if not logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const userID = localStorage.getItem('userID');
+            const password = localStorage.getItem('password');
+            
+            if (!userID || !password) {
+                // User is not authenticated, redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>

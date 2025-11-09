@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Color Flow</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .color-input { width: 100px; height: 40px; margin: 5px; }
+        .debug-output { background: #000; color: #0f0; padding: 10px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Test Color Flow - Complete Chain</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Color Input</h3>
+        <div>
+            <label>Profile Color:</label>
+            <input type="color" id="profileColor" class="color-input" value="#ffffff">
+            <span id="profileColorValue">#ffffff</span>
+        </div>
+        <div>
+            <label>Text Color:</label>
+            <input type="color" id="textColor" class="color-input" value="#000000">
+            <span id="textColorValue">#000000</span>
+        </div>
+        <button onclick="testJavaScript()">Test JavaScript Values</button>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test Form Submission</h3>
+        <button onclick="testFormSubmission()">Test Form Submission to API</button>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test Database Check</h3>
+        <button onclick="checkDatabase()">Check Database Values</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Debug Output</h3>
+        <div id="debugOutput" class="debug-output">Click buttons to test...</div>
+    </div>
+
+    <script>
+        // Update color value displays
+        document.getElementById('profileColor').addEventListener('input', function() {
+            document.getElementById('profileColorValue').textContent = this.value;
+        });
+        document.getElementById('textColor').addEventListener('input', function() {
+            document.getElementById('textColorValue').textContent = this.value;
+        });
+
+        function testJavaScript() {
+            const profileColor = document.getElementById('profileColor').value;
+            const textColor = document.getElementById('textColor').value;
+            
+            let output = "=== JAVASCRIPT TEST ===\n";
+            output += `profileColor: "${profileColor}" (length: ${profileColor.length})\n`;
+            output += `textColor: "${textColor}" (length: ${textColor.length})\n`;
+            
+            // Check format
+            if (profileColor.length !== 7 || !profileColor.startsWith('#')) {
+                output += `WARNING: profileColor format invalid!\n`;
+            }
+            if (textColor.length !== 7 || !textColor.startsWith('#')) {
+                output += `WARNING: textColor format invalid!\n`;
+            }
+            
+            output += "=== END JAVASCRIPT TEST ===\n\n";
+            document.getElementById('debugOutput').textContent += output;
+        }
+
+        async function testFormSubmission() {
+            const formData = new FormData();
+            
+            // Add authentication (you'll need to replace these with real values)
+            formData.append('username', 'testuser');
+            formData.append('userID', 'test123');
+            formData.append('password', 'testpass');
+            
+            // Add color values
+            formData.append('profileColor', document.getElementById('profileColor').value);
+            formData.append('textColor', document.getElementById('textColor').value);
+            formData.append('profileOpacity', '100');
+            formData.append('textOpacity', '100');
+            formData.append('socialBgColor', '#000000');
+            formData.append('socialTextColor', '#ffffff');
+            formData.append('socialOpacity', '90');
+            formData.append('description', 'Test description');
+            
+            let output = "=== FORM SUBMISSION TEST ===\n";
+            output += "Sending data:\n";
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('Color')) {
+                    output += `  ${key}: "${value}" (length: ${value.length})\n`;
+                }
+            }
+            
+            try {
+                const response = await fetch('api/update-profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const responseText = await response.text();
+                output += "\nAPI Response:\n" + responseText;
+                
+            } catch (error) {
+                output += "\nAPI Error: " + error.message;
+            }
+            
+            output += "\n=== END FORM SUBMISSION TEST ===\n\n";
+            document.getElementById('debugOutput').textContent += output;
+        }
+
+        async function checkDatabase() {
+            try {
+                const response = await fetch('check-db.php');
+                const responseText = await response.text();
+                
+                let output = "=== DATABASE CHECK ===\n";
+                output += responseText;
+                output += "\n=== END DATABASE CHECK ===\n\n";
+                
+                document.getElementById('debugOutput').textContent += output;
+            } catch (error) {
+                document.getElementById('debugOutput').textContent += "Database check error: " + error.message + "\n\n";
+            }
+        }
+    </script>
+</body>
+</html>

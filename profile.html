@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль користувача | Bionrgg</title>
+    <meta name="description" content="Цифрова візитівка на Bionrgg — створіть та поділіться вашим профілем.">
+    <meta name="robots" content="index, follow">
+    
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Profile Container -->
+    <div class="profile-container" id="profileContainer">
+        <!-- Loading State -->
+        <div class="loading-center" id="profileLoading">
+            <div class="spinner"></div>
+                <p>Завантаження профілю...</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="profile-error" id="profileError" style="display: none;">
+            <div class="error-content">
+                <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <h3>Профіль не знайдено</h3>
+                <p>Користувача з таким ім'ям не існує або профіль було видалено.</p>
+                <a href="index.html" class="btn btn-primary">На головну</a>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content" id="profileContent" style="display: none;">
+            <!-- Navigation -->
+            <nav class="profile-nav">
+                <a href="index.html" class="profile-nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9,22 9,12 15,12 15,22"/>
+                    </svg>
+                    <span class="nav-link-title">На головну</span>
+                </a>
+            </nav>
+
+            <!-- Profile Card -->
+            <div class="profile-card" id="profileCard">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <img src="assets/img/profile.png" alt="Avatar" id="avatarImage">
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-name" id="profileName">Завантаження...</h1>
+                        <p class="profile-description" id="profileDescription">Завантаження...</p>
+                            <div class="profile-company" id="profileCompany">
+                                <div class="profile-company-logo" id="profileCompanyLogoWrapper">
+                                    <img id="profileCompanyLogo" alt="Company logo">
+                                </div>
+                                <div class="profile-company-text">
+                                    <span class="profile-company-name" id="profileCompanyName"></span>
+                                    <span class="profile-company-tagline" id="profileCompanyTagline"></span>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                <div class="profile-links" id="profileLinks">
+                    <!-- Links will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="assets/js/profile.js?v=2.0"></script>
+</body>
+</html>

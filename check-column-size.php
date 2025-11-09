@@ -3,7 +3,7 @@
 header('Content-Type: text/plain');
 
 try {
-    $connectDB = new mysqli("localhost", "root", "root", "bionrgg");
+    $connectDB = new mysqli("localhost", "u743896667_bionrgg", "Godzila#9145", "u743896667_bionrgg");
     
     if ($connectDB->connect_error) {
         throw new Exception("Database connection failed: " . $connectDB->connect_error);

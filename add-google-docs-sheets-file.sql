@@ -1,7 +1,7 @@
 -- SQL запрос для добавления колонок googleDocs, googleSheets и fileUpload в таблицу users_info
 -- Виконайте цей запит у вашій базі даних
 
-USE `bionrgg`;
+USE `u743896667_bionrgg`;
 
 -- Додавання колонки googleDocs
 ALTER TABLE `users_info` 

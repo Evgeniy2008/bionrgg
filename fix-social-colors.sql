@@ -2,7 +2,7 @@
 -- This script fixes the VARCHAR size for social media color fields
 -- Execute this in phpMyAdmin or MySQL console
 
-USE `bionrgg`;
+USE `u743896667_bionrgg`;
 
 -- Modify existing columns to have correct size
 ALTER TABLE `users_info` MODIFY COLUMN `socialBgColor` varchar(9) DEFAULT '#000000';
@@ -23,7 +23,7 @@ SELECT
     IS_NULLABLE,
     COLUMN_DEFAULT
 FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_SCHEMA = 'bionrgg' 
+WHERE TABLE_SCHEMA = 'u743896667_bionrgg' 
 AND TABLE_NAME = 'users_info' 
 AND COLUMN_NAME IN ('color', 'colorText', 'socialBgColor', 'socialTextColor')
 ORDER BY COLUMN_NAME; 

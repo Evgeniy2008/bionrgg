@@ -91,9 +91,9 @@ if (!defined('BIONRGG_BOOTSTRAPPED')) {
 
 // Конфигурация базы данных
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
-define('DB_NAME', 'bionrgg');
+define('DB_USER', 'u743896667_bionrgg');
+define('DB_PASS', 'Godzila#9145');
+define('DB_NAME', 'u743896667_bionrgg');
 
 function clearAllOutputBuffers(): void {
     while (ob_get_level() > 0) {
@@ -144,7 +144,7 @@ function ensureCoreSchema(mysqli $conn): void {
         }
     }
 
-    foreach (['user_id', 'profile_type'] as $column) {
+    foreach (['user_id', 'profile_type', 'extraLinks', 'customLogo', 'customLogoPosition', 'customLogoSize'] as $column) {
         if (!dbColumnExists($conn, 'users_info', $column)) {
             $missing[] = "users_info.{$column}";
         }

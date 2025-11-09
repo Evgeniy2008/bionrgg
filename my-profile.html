@@ -114,8 +114,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="profile-preview-container profile-container" id="profilePreviewContainer">
+                        <div class="profile-preview-container profile-container" id="profilePreviewContainer">
                         <div class="profile-preview-card profile-card" id="profilePreviewCard">
+                                <div class="profile-custom-logo" id="previewCustomLogo" style="display: none;">
+                                    <img id="previewCustomLogoImg" alt="Custom logo">
+                                </div>
                             <div class="profile-preview-header profile-header">
                                 <div class="profile-preview-avatar profile-avatar" id="previewAvatar">
                                     <img src="assets/img/profile.png" alt="Avatar" id="previewAvatarImg">
@@ -300,6 +303,48 @@
                                         </div>
                                     </div>
                                     <small class="form-help">Колір фону для тексту (опціонально, якщо текст зливається з фоном)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Логотип на візитці</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customLogo" class="form-label">Користувацький логотип</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="customLogo" name="customLogo" class="file-input" accept="image/*">
+                                        <label for="customLogo" class="file-label">
+                                            <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                <polyline points="7,10 12,15 17,10"/>
+                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                            </svg>
+                                            <span class="file-text">Вибрати логотип</span>
+                                        </label>
+                                    </div>
+                                    <small class="form-help">Формат PNG або SVG з прозорим фоном. Максимум 10MB.</small>
+                                    <div class="form-help" id="customLogoStatus"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customLogoPosition" class="form-label">Розташування логотипу</label>
+                                    <select id="customLogoPosition" name="customLogoPosition" class="form-input">
+                                        <option value="none">Не відображати</option>
+                                        <option value="top-left">Верхній лівий кут</option>
+                                        <option value="top-center">Верх по центру</option>
+                                        <option value="top-right">Верхній правий кут</option>
+                                        <option value="middle-left">По центру зліва</option>
+                                        <option value="middle-center">По центру</option>
+                                        <option value="middle-right">По центру справа</option>
+                                        <option value="bottom-left">Нижній лівий кут</option>
+                                        <option value="bottom-center">Низ по центру</option>
+                                        <option value="bottom-right">Нижній правий кут</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customLogoSize" class="form-label">Розмір логотипу</label>
+                                    <input type="range" id="customLogoSize" name="customLogoSize" class="form-slider" min="40" max="200" value="90">
+                                    <div class="form-slider-value"><span id="customLogoSizeValue">90</span> px</div>
                                 </div>
                             </div>
                         </div>
@@ -604,6 +649,13 @@
                                         </div>
                                     </div>
                                 </div>
+
+                        <div class="social-category">
+                            <h5>Додаткові посилання та файли</h5>
+                            <p class="form-help">Додавайте необмежену кількість посилань або файлів. Наприклад, кілька Instagram-акаунтів чи декілька презентацій.</p>
+                            <div id="extraLinksContainer" class="extra-links-container"></div>
+                            <button type="button" class="btn btn-primary" id="addExtraLinkBtn" style="margin-top: 0.75rem;">Додати посилання або файл</button>
+                        </div>
 
                                 <!-- Freelance & Work -->
                                 <div class="social-category">

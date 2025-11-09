@@ -3,6 +3,17 @@ class ProfileViewer {
     constructor() {
         this.profileData = null;
         this.companyInfo = null;
+        this.logoPositionClasses = [
+            'logo-position-top-left',
+            'logo-position-top-center',
+            'logo-position-top-right',
+            'logo-position-middle-left',
+            'logo-position-middle-center',
+            'logo-position-middle-right',
+            'logo-position-bottom-left',
+            'logo-position-bottom-center',
+            'logo-position-bottom-right'
+        ];
         this.init();
     }
 
@@ -318,6 +329,8 @@ class ProfileViewer {
             }
         }, 100);
 
+        this.updateCustomLogoDisplay();
+
         // Update social links
         this.updateSocialLinks();
 
@@ -494,11 +507,8 @@ class ProfileViewer {
         console.log('Social styling applied successfully');
     }
 
-    getSocialLinks() {
-        console.log('Getting social links for profile:', this.profileData);
-        
-        const links = [];
-        const socialPlatforms = {
+    getSocialPlatformDefinitions() {
+        return {
             // Popular Platforms
             instagram: { name: 'Instagram', icon: 'assets/img/insta.png' },
             youtube: { name: 'YouTube', icon: 'assets/img/youtube.png' },
@@ -558,6 +568,13 @@ class ProfileViewer {
             binance: { name: 'Binance', icon: 'assets/img/binance.png' },
             trustWallet: { name: 'Trust Wallet', icon: 'assets/img/trustWallet.png' }
         };
+    }
+
+    getSocialLinks() {
+        console.log('Getting social links for profile:', this.profileData);
+        
+        const links = [];
+        const socialPlatforms = this.getSocialPlatformDefinitions();
 
         Object.entries(socialPlatforms).forEach(([key, platform]) => {
             let value = this.profileData ? this.profileData[key] : '';
@@ -608,7 +625,137 @@ class ProfileViewer {
             });
         });
 
+        const extraLinks = this.getExtraLinksFromProfile();
+        if (extraLinks.length > 0) {
+            extraLinks.forEach((entry) => {
+                if (!entry || typeof entry !== 'object') {
+                    return;
+                }
+
+                const platformKey = entry.platform && socialPlatforms[entry.platform] ? entry.platform : null;
+                const basePlatform = platformKey
+                    ? socialPlatforms[platformKey]
+                    : {
+                        name: entry.label && entry.label.trim() ? entry.label.trim() : 'Посилання',
+                        icon: (socialPlatforms.site && socialPlatforms.site.icon) || 'assets/img/site.png'
+                    };
+
+                const labelText = entry.label && entry.label.trim() ? entry.label.trim() : basePlatform.name;
+                const type = entry.type === 'file' ? 'file' : 'link';
+
+                if (type === 'file') {
+                    const storedPath = entry.storedFilePath ? String(entry.storedFilePath).trim() : '';
+                    if (!storedPath) {
+                        return;
+                    }
+                    const href = this.formatFileUrl(storedPath);
+                    const fileName = entry.originalName && entry.originalName.trim()
+                        ? entry.originalName.trim()
+                        : this.getFileDisplayName(storedPath);
+                    const displayName = labelText ? `${labelText}: ${fileName}` : fileName;
+
+                    links.push({
+                        ...basePlatform,
+                        url: storedPath,
+                        href,
+                        isFile: true,
+                        displayName,
+                        displayValue: fileName,
+                        downloadName: fileName
+                    });
+                    return;
+                }
+
+                const url = entry.url ? String(entry.url).trim() : '';
+                if (!url) {
+                    return;
+                }
+
+                const normalizedUrl = this.normalizeUrl(url, entry.platform || '');
+                const isUrl = normalizedUrl.startsWith('http://') || normalizedUrl.startsWith('https://');
+
+                links.push({
+                    ...basePlatform,
+                    url: normalizedUrl,
+                    href: isUrl ? normalizedUrl : '',
+                    displayName: labelText,
+                    displayValue: normalizedUrl
+                });
+            });
+        }
+
         return links;
+    }
+
+    updateCustomLogoDisplay() {
+        const logoWrapper = document.getElementById('profileCustomLogo');
+        const logoImg = document.getElementById('profileCustomLogoImg');
+
+        if (!logoWrapper || !logoImg) {
+            return;
+        }
+
+        const position = this.profileData && this.profileData.customLogoPosition
+            ? this.profileData.customLogoPosition
+            : 'none';
+
+        let size = this.profileData && this.profileData.customLogoSize
+            ? Number(this.profileData.customLogoSize)
+            : 90;
+        if (Number.isNaN(size) || size <= 0) {
+            size = 90;
+        }
+        size = Math.round(size);
+
+        let source = null;
+        if (this.profileData && this.profileData.customLogo) {
+            source = this.formatImageSource(this.profileData.customLogo);
+        }
+
+        logoWrapper.classList.remove('logo-visible', ...this.logoPositionClasses);
+        logoWrapper.style.display = 'none';
+        logoWrapper.style.width = '';
+        logoImg.src = '';
+
+        if (!source || position === 'none') {
+            return;
+        }
+
+        let normalizedPosition = `logo-position-${position}`;
+        if (!this.logoPositionClasses.includes(normalizedPosition)) {
+            normalizedPosition = 'logo-position-middle-center';
+        }
+
+        logoWrapper.style.display = 'block';
+        logoWrapper.style.width = `${size}px`;
+        logoWrapper.classList.add('logo-visible', normalizedPosition);
+        logoImg.src = source;
+    }
+
+    getExtraLinksFromProfile() {
+        if (!this.profileData) {
+            return [];
+        }
+
+        let extraLinks = this.profileData.extraLinks ?? [];
+        if (!extraLinks) {
+            return [];
+        }
+
+        if (typeof extraLinks === 'string') {
+            try {
+                extraLinks = JSON.parse(extraLinks);
+            } catch (error) {
+                console.warn('Failed to parse extraLinks JSON on profile view', error);
+                extraLinks = [];
+            }
+        }
+
+        if (!Array.isArray(extraLinks)) {
+            return [];
+        }
+
+        return extraLinks;
     }
 
     normalizeUrl(url, fieldName = '') {
@@ -700,6 +847,11 @@ class ProfileViewer {
 
         const trimmed = value.trim();
         if (trimmed === '') {
+            return null;
+        }
+
+        const lower = trimmed.toLowerCase();
+        if (lower === 'null' || lower === 'undefined') {
             return null;
         }
 

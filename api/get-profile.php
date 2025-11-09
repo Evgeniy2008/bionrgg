@@ -108,6 +108,16 @@ try {
     $conn->close();
     $formattedCompanyLogo = $companyLogo ? loadMediaContent($companyLogo) : null;
 
+    $customLogoStoredPath = $profile['customLogo'] ?? '';
+
+    $profileExtraLinks = [];
+    if (!empty($profile['extraLinks'])) {
+        $decodedExtraLinks = json_decode($profile['extraLinks'], true);
+        if (is_array($decodedExtraLinks)) {
+            $profileExtraLinks = $decodedExtraLinks;
+        }
+    }
+
     if (!$companyDisplayName) {
         $companyDisplayName = $companyName ?? '';
     }
@@ -178,6 +188,10 @@ try {
             'socialOpacity' => (int)($profile['socialOpacity'] ?? 90),
             'profileBgType' => $profile['profileBgType'] ?? 'color',
             'socialBgType' => $profile['socialBgType'] ?? 'color',
+            'customLogo' => $profile['customLogo'] ?? null,
+            'customLogoPosition' => $profile['customLogoPosition'] ?? 'none',
+            'customLogoSize' => isset($profile['customLogoSize']) ? (int)$profile['customLogoSize'] : 90,
+            'customLogoPath' => $customLogoStoredPath,
             'companyId' => isset($profile['company_id']) ? (int)$profile['company_id'] : null,
             'companyDisplayName' => $companyDisplayName ?? '',
             'companyTagline' => $companyTagline ?? '',
@@ -185,11 +199,12 @@ try {
             'companyShowLogo' => $companyShowLogo !== null ? (int)$companyShowLogo : 1,
             'companyShowName' => $companyShowName !== null ? (int)$companyShowName : 1,
             'companyName' => $companyName ?? '',
-            'companyRole' => $companyRole
+            'companyRole' => $companyRole,
+            'extraLinks' => $profileExtraLinks
         ]
     ];
     
-    $mediaFields = ['avatar', 'bg', 'blockImage', 'socialBgImage'];
+    $mediaFields = ['avatar', 'bg', 'blockImage', 'socialBgImage', 'customLogo'];
     foreach ($mediaFields as $field) {
         if (isset($response['profile'][$field])) {
             $response['profile'][$field] = loadMediaContent($response['profile'][$field]);

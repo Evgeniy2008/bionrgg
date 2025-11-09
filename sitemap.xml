@@ -37,4 +37,20 @@
         <priority>0.5</priority>
     </url>
     
+    <!-- Privacy Policy -->
+    <url>
+        <loc>https://bionrgg.com/privacy.html</loc>
+        <lastmod>2025-11-09</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <!-- Terms of Use -->
+    <url>
+        <loc>https://bionrgg.com/terms.html</loc>
+        <lastmod>2025-11-09</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
 </urlset> 

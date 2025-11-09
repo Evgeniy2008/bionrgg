@@ -15,7 +15,7 @@ class ExportService
     {
         $this->basePath = rtrim($basePath, DIRECTORY_SEPARATOR);
         $this->baseUrl = rtrim($baseUrl, '/');
-        $this->baseDomain = $_ENV['APP_BASE_URL'] ?? getenv('APP_BASE_URL') ?? 'https://bionrgg.local';
+        $this->baseDomain = $_ENV['APP_BASE_URL'] ?? getenv('APP_BASE_URL') ?? 'https://bionrgg.com';
     }
 
     public function generateQr(Profile $profile): string

@@ -8,9 +8,26 @@ class MyProfilePage {
             background: null,
             blockImage: null,
             socialBgImage: null,
+            customLogo: null,
             file: null
         };
+        this.customLogoSizeValueEl = null;
+        this.logoPositionClasses = [
+            'logo-position-top-left',
+            'logo-position-top-center',
+            'logo-position-top-right',
+            'logo-position-middle-left',
+            'logo-position-middle-center',
+            'logo-position-middle-right',
+            'logo-position-bottom-left',
+            'logo-position-bottom-center',
+            'logo-position-bottom-right'
+        ];
         this.pendingFileAttachment = null;
+        this.extraLinks = [];
+        this.extraLinksContainer = null;
+        this.extraLinksInitialized = false;
+        this.extraLinkAddButton = null;
         const params = new URLSearchParams(window.location.search);
         this.mode = document.body.dataset.profileMode || params.get('mode') || 'default';
         if (this.mode === 'employee') {
@@ -53,13 +70,40 @@ class MyProfilePage {
         }
 
         // File inputs
-        const fileInputs = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'fileUploadInput'];
+        const fileInputs = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'customLogo', 'fileUploadInput'];
         fileInputs.forEach(id => {
             const input = document.getElementById(id);
             if (input) {
                 input.addEventListener('change', (e) => this.handleFilePreview(e));
             }
         });
+
+        const customLogoPositionInput = document.getElementById('customLogoPosition');
+        if (customLogoPositionInput) {
+            customLogoPositionInput.addEventListener('change', () => {
+                if (!this.profileData) {
+                    this.profileData = {};
+                }
+                this.profileData.customLogoPosition = customLogoPositionInput.value;
+                this.updateCustomLogoStatus();
+                this.updateCustomLogoPreview();
+            });
+        }
+
+        const customLogoSizeInput = document.getElementById('customLogoSize');
+        this.customLogoSizeValueEl = document.getElementById('customLogoSizeValue');
+        if (customLogoSizeInput) {
+            customLogoSizeInput.addEventListener('input', () => {
+                if (this.customLogoSizeValueEl) {
+                    this.customLogoSizeValueEl.textContent = customLogoSizeInput.value;
+                }
+                if (!this.profileData) {
+                    this.profileData = {};
+                }
+                this.profileData.customLogoSize = Number(customLogoSizeInput.value);
+                this.updateCustomLogoPreview();
+            });
+        }
 
         // Text inputs for live preview
         const textInputs = ['username', 'description'];
@@ -203,6 +247,9 @@ class MyProfilePage {
         // Toggle buttons for background types
         this.setupToggleButtons();
 
+        // Initialize extra links UI
+        this.initializeExtraLinksUI();
+
         console.log('Event listeners set up successfully');
     }
 
@@ -249,6 +296,42 @@ class MyProfilePage {
         }
 
         return normalized;
+    }
+
+    formatImageSource(value) {
+        if (!value || typeof value !== 'string') {
+            return null;
+        }
+
+        const trimmed = value.trim();
+        if (trimmed === '') {
+            return null;
+        }
+
+        const lower = trimmed.toLowerCase();
+        if (lower === 'null' || lower === 'undefined') {
+            return null;
+        }
+
+        const normalized = trimmed.replace(/\\/g, '/');
+
+        if (normalized.startsWith('data:')) {
+            return normalized;
+        }
+
+        if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
+            return normalized;
+        }
+
+        if (normalized.startsWith('/uploads/')) {
+            return normalized;
+        }
+
+        if (normalized.startsWith('uploads/')) {
+            return `/${normalized}`;
+        }
+
+        return `data:image/*;base64,${normalized}`;
     }
 
     getFileDisplayName(value) {
@@ -334,6 +417,7 @@ class MyProfilePage {
                     background: null,
                     blockImage: null,
                     socialBgImage: null,
+                    customLogo: null,
                     file: null
                 };
                 this.pendingFileAttachment = null;
@@ -858,6 +942,9 @@ class MyProfilePage {
             fileUploadField.value = this.profileData.fileUpload || '';
         }
         this.updateFileUploadStatus();
+
+        const profileExtraLinks = this.getExtraLinksFromProfile(this.profileData);
+        this.setExtraLinks(profileExtraLinks);
         
         // Freelance & Work
         document.getElementById('upwork').value = this.profileData.upwork || '';
@@ -912,6 +999,30 @@ class MyProfilePage {
             socialOpacityValue.textContent = socialOpacity + '%';
         }
 
+        const customLogoPositionInput = document.getElementById('customLogoPosition');
+        if (customLogoPositionInput) {
+            const position = this.profileData.customLogoPosition || 'none';
+            customLogoPositionInput.value = position;
+            this.profileData.customLogoPosition = position;
+        }
+
+        const customLogoSizeInput = document.getElementById('customLogoSize');
+        let customLogoSize = this.profileData.customLogoSize !== undefined ? Number(this.profileData.customLogoSize) : 90;
+        if (Number.isNaN(customLogoSize) || customLogoSize <= 0) {
+            customLogoSize = 90;
+        }
+        if (customLogoSizeInput) {
+            customLogoSizeInput.value = customLogoSize;
+        }
+        if (this.profileData) {
+            this.profileData.customLogoSize = customLogoSize;
+        }
+        if (this.customLogoSizeValueEl) {
+            this.customLogoSizeValueEl.textContent = customLogoSize;
+        }
+
+        this.updateCustomLogoStatus();
+
         // Update character counter
         this.updateCharacterCounter();
         
@@ -957,6 +1068,112 @@ class MyProfilePage {
         } else {
             statusEl.textContent = '';
         }
+    }
+
+    updateCustomLogoStatus() {
+        const statusEl = document.getElementById('customLogoStatus');
+        if (!statusEl) {
+            return;
+        }
+
+        const fileInput = document.getElementById('customLogo');
+        const positionInput = document.getElementById('customLogoPosition');
+        const position = positionInput ? positionInput.value : (this.profileData && this.profileData.customLogoPosition) || 'none';
+
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const sizeText = this.formatFileSize(file.size);
+            const sizeLabel = sizeText ? ` (${sizeText})` : '';
+            statusEl.textContent = `Обрано логотип: ${file.name}${sizeLabel}. Збережіть зміни, щоб застосувати.`;
+            return;
+        }
+
+        if (this.uploadedFiles.customLogo) {
+            statusEl.textContent = 'Логотип додано. Збережіть зміни, щоб застосувати.';
+            return;
+        }
+
+        if (this.profileData && this.profileData.customLogo) {
+            let storedPath = '';
+            if (typeof this.profileData.customLogoPath === 'string') {
+                const trimmed = this.profileData.customLogoPath.trim();
+                if (trimmed && trimmed.toLowerCase() !== 'null' && trimmed.toLowerCase() !== 'undefined') {
+                    storedPath = trimmed;
+                }
+            }
+            const displayName = storedPath ? this.getFileDisplayName(storedPath) : '';
+            const href = storedPath ? this.formatFileUrl(storedPath) : '';
+
+            if (position === 'none') {
+                if (storedPath && this.isStoredFilePath(storedPath)) {
+                    statusEl.innerHTML = `Логотип <a href="${href}" target="_blank" rel="noopener noreferrer" download="${displayName}">${displayName}</a> збережено, але приховано.`;
+                } else if (displayName) {
+                    statusEl.textContent = `Логотип ${displayName} збережено, але приховано.`;
+                } else {
+                    statusEl.textContent = 'Логотип збережено, але наразі приховано. Оберіть позицію, щоб показати.';
+                }
+            } else if (storedPath && this.isStoredFilePath(storedPath)) {
+                statusEl.innerHTML = `Поточний логотип: <a href="${href}" target="_blank" rel="noopener noreferrer" download="${displayName}">${displayName}</a>`;
+            } else if (displayName) {
+                statusEl.textContent = `Поточний логотип: ${displayName}`;
+            } else {
+                statusEl.textContent = 'Поточний логотип застосовано.';
+            }
+            return;
+        }
+
+        statusEl.textContent = 'Логотип не додано.';
+    }
+
+    updateCustomLogoPreview() {
+        const logoWrapper = document.getElementById('previewCustomLogo');
+        const logoImg = document.getElementById('previewCustomLogoImg');
+        if (!logoWrapper || !logoImg) {
+            return;
+        }
+
+        const positionInput = document.getElementById('customLogoPosition');
+        const sizeInput = document.getElementById('customLogoSize');
+
+        let position = positionInput
+            ? positionInput.value
+            : (this.profileData && this.profileData.customLogoPosition) || 'none';
+        const requestedPosition = position;
+        let normalizedPosition = `logo-position-${position}`;
+        if (!this.logoPositionClasses.includes(normalizedPosition)) {
+            position = 'middle-center';
+            normalizedPosition = 'logo-position-middle-center';
+        }
+
+        let size = sizeInput
+            ? Number(sizeInput.value)
+            : (this.profileData && Number(this.profileData.customLogoSize)) || 90;
+        if (Number.isNaN(size) || size <= 0) {
+            size = 90;
+        }
+        size = Math.round(size);
+
+        let source = null;
+        if (this.uploadedFiles.customLogo) {
+            source = this.uploadedFiles.customLogo;
+        } else if (this.profileData && this.profileData.customLogo) {
+            source = this.formatImageSource(this.profileData.customLogo);
+        }
+
+        logoWrapper.classList.remove('logo-visible', ...this.logoPositionClasses);
+        logoWrapper.style.display = 'none';
+        logoWrapper.style.width = '';
+        logoImg.src = '';
+
+        if (!source || requestedPosition === 'none') {
+            return;
+        }
+
+        logoWrapper.style.display = 'block';
+        logoWrapper.style.width = `${size}px`;
+        logoWrapper.classList.add('logo-visible');
+        logoWrapper.classList.add(normalizedPosition);
+        logoImg.src = source;
     }
 
     updatePreview() {
@@ -1164,6 +1381,8 @@ class MyProfilePage {
             }
         }
 
+        this.updateCustomLogoPreview();
+
         // Update social links
         this.updatePreviewLinks();
         
@@ -1248,11 +1467,8 @@ class MyProfilePage {
         console.log('Preview links updated successfully');
     }
 
-    getSocialLinks() {
-        console.log('Getting social links...');
-        
-        const links = [];
-        const socialPlatforms = {
+    getSocialPlatformDefinitions() {
+        return {
             // Popular Platforms
             instagram: { name: 'Instagram', icon: 'assets/img/insta.png' },
             youtube: { name: 'YouTube', icon: 'assets/img/youtube.png' },
@@ -1312,6 +1528,13 @@ class MyProfilePage {
             binance: { name: 'Binance', icon: 'assets/img/binance.png' },
             trustWallet: { name: 'Trust Wallet', icon: 'assets/img/trustWallet.png' }
         };
+    }
+
+    getSocialLinks() {
+        console.log('Getting social links...');
+        
+        const links = [];
+        const socialPlatforms = this.getSocialPlatformDefinitions();
 
         Object.entries(socialPlatforms).forEach(([key, platform]) => {
             const input = document.getElementById(key);
@@ -1384,8 +1607,502 @@ class MyProfilePage {
             }
         });
 
+        if (Array.isArray(this.extraLinks) && this.extraLinks.length > 0) {
+            this.extraLinks.forEach((entry) => {
+                if (!entry || entry.removed) {
+                    return;
+                }
+
+                const platformKey = entry.platform && socialPlatforms[entry.platform] ? entry.platform : null;
+                const basePlatform = platformKey
+                    ? socialPlatforms[platformKey]
+                    : {
+                        name: entry.label && entry.label.trim() ? entry.label.trim() : 'Посилання',
+                        icon: (socialPlatforms.site && socialPlatforms.site.icon) || 'assets/img/site.png'
+                    };
+
+                const customLabel = entry.label && entry.label.trim() ? entry.label.trim() : '';
+
+                if (entry.type === 'file') {
+                    if (entry.pendingFile instanceof File) {
+                        const sizeText = this.formatFileSize(entry.pendingFile.size);
+                        const pendingLabel = sizeText
+                            ? `${entry.pendingFile.name} (${sizeText})`
+                            : entry.pendingFile.name;
+                        const labelText = customLabel || basePlatform.name;
+
+                        links.push({
+                            ...basePlatform,
+                            url: '',
+                            href: '',
+                            displayName: `${labelText}: ${pendingLabel}`,
+                            displayValue: `Файл буде прикріплено після збереження (${pendingLabel})`,
+                            isPendingFile: true
+                        });
+                        return;
+                    }
+
+                    if (entry.storedFilePath) {
+                        const href = this.formatFileUrl(entry.storedFilePath);
+                        const fileName = entry.originalName || this.getFileDisplayName(entry.storedFilePath);
+                        const labelText = customLabel ? `${customLabel}: ${fileName}` : `${basePlatform.name}: ${fileName}`;
+
+                        links.push({
+                            ...basePlatform,
+                            url: entry.storedFilePath,
+                            href,
+                            displayName: labelText,
+                            displayValue: fileName,
+                            isFile: true,
+                            downloadName: fileName
+                        });
+                    }
+                    return;
+                }
+
+                const value = entry.url ? entry.url.trim() : '';
+                if (!value) {
+                    return;
+                }
+
+                const normalizedUrl = this.normalizeUrl(value, entry.platform || '');
+                const isUrl = normalizedUrl.startsWith('http://') || normalizedUrl.startsWith('https://');
+                const labelText = customLabel || basePlatform.name;
+
+                links.push({
+                    ...basePlatform,
+                    url: normalizedUrl,
+                    href: isUrl ? normalizedUrl : '',
+                    displayName: labelText,
+                    displayValue: normalizedUrl
+                });
+            });
+        }
+
         console.log('Social links result:', links);
         return links;
+    }
+
+    ensureExtraLinksInitialized() {
+        if (!this.extraLinksInitialized) {
+            this.initializeExtraLinksUI();
+        }
+    }
+
+    initializeExtraLinksUI() {
+        if (this.extraLinksInitialized) {
+            return;
+        }
+
+        const container = document.getElementById('extraLinksContainer');
+        const addBtn = document.getElementById('addExtraLinkBtn');
+
+        if (!container || !addBtn) {
+            console.warn('Extra links UI elements not found in DOM');
+            return;
+        }
+
+        this.extraLinksContainer = container;
+        this.extraLinkAddButton = addBtn;
+        this.extraLinksInitialized = true;
+
+        addBtn.addEventListener('click', () => {
+            this.addExtraLink();
+        });
+
+        this.renderExtraLinks();
+    }
+
+    getExtraLinksFromProfile(profile) {
+        if (!profile) {
+            return [];
+        }
+
+        let extraLinks = profile.extraLinks;
+
+        if (!extraLinks) {
+            return [];
+        }
+
+        if (typeof extraLinks === 'string') {
+            try {
+                extraLinks = JSON.parse(extraLinks);
+            } catch (error) {
+                console.warn('Failed to parse extraLinks JSON from profile', error);
+                extraLinks = [];
+            }
+        }
+
+        if (!Array.isArray(extraLinks)) {
+            return [];
+        }
+
+        return extraLinks;
+    }
+
+    createExtraLinkDataObject(data = {}) {
+        const id = typeof data.id === 'string' && data.id.trim() !== ''
+            ? data.id
+            : this.generateUniqueId('extra');
+
+        const type = data.type === 'file' ? 'file' : 'link';
+
+        return {
+            id,
+            platform: typeof data.platform === 'string' ? data.platform : '',
+            label: typeof data.label === 'string' ? data.label : '',
+            type,
+            url: typeof data.url === 'string' ? data.url : '',
+            storedFilePath: typeof data.storedFilePath === 'string' ? data.storedFilePath : '',
+            originalName: typeof data.originalName === 'string' ? data.originalName : '',
+            size: typeof data.size === 'number' ? data.size : (data.size ? Number(data.size) : null),
+            pendingFile: null,
+            element: null
+        };
+    }
+
+    setExtraLinks(extraLinks) {
+        this.extraLinks = Array.isArray(extraLinks)
+            ? extraLinks.map((link) => this.createExtraLinkDataObject(link))
+            : [];
+
+        if (this.extraLinksContainer) {
+            this.renderExtraLinks();
+        }
+    }
+
+    addExtraLink(initialData = {}) {
+        this.ensureExtraLinksInitialized();
+
+        const entry = this.createExtraLinkDataObject(initialData);
+        this.extraLinks.push(entry);
+
+        if (this.extraLinksContainer) {
+            if (this.extraLinks.length === 1) {
+                this.extraLinksContainer.innerHTML = '';
+            }
+            const element = this.createExtraLinkElement(entry);
+            this.extraLinksContainer.appendChild(element);
+            entry.element = element;
+        } else {
+            this.renderExtraLinks();
+        }
+
+        this.updatePreview();
+    }
+
+    renderExtraLinks() {
+        this.ensureExtraLinksInitialized();
+
+        if (!this.extraLinksContainer) {
+            return;
+        }
+
+        this.extraLinksContainer.innerHTML = '';
+
+        if (!Array.isArray(this.extraLinks) || this.extraLinks.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'form-help';
+            emptyState.style.marginTop = '0.5rem';
+            emptyState.textContent = 'Поки що не додано жодного посилання або файлу.';
+            this.extraLinksContainer.appendChild(emptyState);
+            return;
+        }
+
+        this.extraLinks.forEach((entry) => {
+            const element = this.createExtraLinkElement(entry);
+            this.extraLinksContainer.appendChild(element);
+            entry.element = element;
+        });
+    }
+
+    getExtraLinkPlatformOptions() {
+        const platforms = this.getSocialPlatformDefinitions();
+        const options = [
+            { value: '', label: 'Оберіть платформу' }
+        ];
+
+        Object.entries(platforms).forEach(([key, value]) => {
+            options.push({ value: key, label: value.name });
+        });
+
+        options.push({ value: 'custom', label: 'Інше' });
+
+        return options;
+    }
+
+    createExtraLinkElement(entry) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'extra-link-item';
+        wrapper.dataset.entryId = entry.id;
+
+        wrapper.innerHTML = `
+            <div class="extra-link-card">
+                <div class="extra-link-row">
+                    <div class="form-group">
+                        <label class="form-label">Платформа</label>
+                        <select class="form-input extra-link-platform"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Тип</label>
+                        <select class="form-input extra-link-type">
+                            <option value="link">Посилання</option>
+                            <option value="file">Файл</option>
+                        </select>
+                    </div>
+                    <div class="form-group extra-link-remove-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-danger extra-link-remove">Видалити</button>
+                    </div>
+                </div>
+                <div class="extra-link-body">
+                    <div class="form-group">
+                        <label class="form-label">Назва (опціонально)</label>
+                        <input type="text" class="form-input extra-link-label" placeholder="Наприклад: Основний Instagram">
+                    </div>
+                    <div class="form-group extra-link-url-group">
+                        <label class="form-label">Посилання</label>
+                        <input type="url" class="form-input extra-link-url" placeholder="https://">
+                    </div>
+                    <div class="form-group extra-link-file-group">
+                        <label class="form-label">Файл</label>
+                        <div class="file-upload">
+                            <input type="file" class="file-input extra-link-file-input" id="${entry.id}-file-input">
+                            <label for="${entry.id}-file-input" class="file-label">
+                                <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span class="file-text">Вибрати файл</span>
+                            </label>
+                        </div>
+                        <div class="form-help extra-link-file-status"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const platformSelect = wrapper.querySelector('.extra-link-platform');
+        const labelInput = wrapper.querySelector('.extra-link-label');
+        const typeSelect = wrapper.querySelector('.extra-link-type');
+        const urlInput = wrapper.querySelector('.extra-link-url');
+        const fileGroup = wrapper.querySelector('.extra-link-file-group');
+        const urlGroup = wrapper.querySelector('.extra-link-url-group');
+        const fileInput = wrapper.querySelector('.extra-link-file-input');
+        const fileStatus = wrapper.querySelector('.extra-link-file-status');
+        const removeBtn = wrapper.querySelector('.extra-link-remove');
+
+        const options = this.getExtraLinkPlatformOptions()
+            .map((option) => `<option value="${option.value}">${option.label}</option>`)
+            .join('');
+        platformSelect.innerHTML = options;
+        platformSelect.value = entry.platform || '';
+
+        labelInput.value = entry.label || '';
+        typeSelect.value = entry.type;
+        urlInput.value = entry.url || '';
+
+        const applyTypeState = () => {
+            if (entry.type === 'file') {
+                urlGroup.style.display = 'none';
+                fileGroup.style.display = 'block';
+            } else {
+                urlGroup.style.display = 'block';
+                fileGroup.style.display = 'none';
+            }
+        };
+
+        platformSelect.addEventListener('change', (event) => {
+            entry.platform = event.target.value;
+            this.updatePreview();
+        });
+
+        labelInput.addEventListener('input', (event) => {
+            entry.label = event.target.value;
+            this.updatePreview();
+        });
+
+        urlInput.addEventListener('input', (event) => {
+            entry.url = event.target.value;
+            this.updatePreview();
+        });
+
+        typeSelect.addEventListener('change', (event) => {
+            const previousType = entry.type;
+            entry.type = event.target.value === 'file' ? 'file' : 'link';
+
+            if (previousType === 'file' && entry.type === 'link') {
+                entry.pendingFile = null;
+                entry.storedFilePath = '';
+                entry.originalName = '';
+                entry.size = null;
+                if (fileInput) {
+                    fileInput.value = '';
+                }
+            }
+
+            applyTypeState();
+            this.updateExtraLinkFileStatus(entry, fileStatus);
+            this.updatePreview();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+
+            if (file) {
+                if (file.size > 50 * 1024 * 1024) {
+                    Utils.showNotification(`Файл "${file.name}" занадто великий (максимум 50MB)`, 'error');
+                    event.target.value = '';
+                    return;
+                }
+                entry.pendingFile = file;
+                entry.originalName = file.name;
+                entry.size = file.size;
+            } else {
+                entry.pendingFile = null;
+            }
+
+            this.updateExtraLinkFileStatus(entry, fileStatus);
+            this.updatePreview();
+        });
+
+        removeBtn.addEventListener('click', () => {
+            const confirmRemoval = window.confirm('Видалити це посилання/файл?');
+            if (!confirmRemoval) {
+                return;
+            }
+
+            const index = this.extraLinks.findIndex((item) => item.id === entry.id);
+            if (index !== -1) {
+                this.extraLinks.splice(index, 1);
+            }
+
+            wrapper.remove();
+
+            if (this.extraLinksContainer && this.extraLinks.length === 0) {
+                this.renderExtraLinks();
+            }
+
+            this.updatePreview();
+        });
+
+        applyTypeState();
+        this.updateExtraLinkFileStatus(entry, fileStatus);
+
+        entry.element = wrapper;
+        entry.fileStatusEl = fileStatus;
+        entry.fileInputEl = fileInput;
+
+        return wrapper;
+    }
+
+    updateExtraLinkFileStatus(entry, statusEl) {
+        if (!statusEl) {
+            return;
+        }
+
+        if (entry.pendingFile instanceof File) {
+            const sizeText = this.formatFileSize(entry.pendingFile.size);
+            const pendingLabel = sizeText
+                ? `${entry.pendingFile.name} (${sizeText})`
+                : entry.pendingFile.name;
+            statusEl.textContent = `Обрано файл: ${pendingLabel}. Збережіть зміни, щоб прикріпити.`;
+            return;
+        }
+
+        if (entry.storedFilePath) {
+            const href = this.formatFileUrl(entry.storedFilePath);
+            const displayName = entry.originalName || this.getFileDisplayName(entry.storedFilePath);
+            statusEl.innerHTML = `Поточний файл: <a href="${href}" target="_blank" rel="noopener noreferrer" download="${displayName}">${displayName}</a>`;
+            return;
+        }
+
+        statusEl.textContent = '';
+    }
+
+    generateUniqueId(prefix = 'id') {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return `${prefix}-${crypto.randomUUID()}`;
+        }
+        const randomPart = Math.random().toString(16).slice(2, 10);
+        return `${prefix}-${Date.now()}-${randomPart}`;
+    }
+
+    buildExtraLinksPayload(formData) {
+        if (!Array.isArray(this.extraLinks) || this.extraLinks.length === 0) {
+            return { payload: [], hasFileUploads: false };
+        }
+
+        const payload = [];
+        let extraFileIndex = 0;
+        let validationFailed = false;
+        let missingFileWarningShown = false;
+        let hasFileUploads = false;
+
+        this.extraLinks.forEach((entry) => {
+            if (!entry) {
+                return;
+            }
+
+            const sanitized = {
+                id: entry.id || this.generateUniqueId('extra'),
+                platform: entry.platform || '',
+                label: (entry.label || '').trim(),
+                type: entry.type === 'file' ? 'file' : 'link',
+                url: '',
+                storedFilePath: '',
+                originalName: '',
+                size: null
+            };
+
+            if (sanitized.type === 'link') {
+                const value = entry.url ? entry.url.trim() : '';
+                if (!value) {
+                    return;
+                }
+                sanitized.url = this.normalizeUrl(value, sanitized.platform);
+            } else {
+                const pendingFile = entry.pendingFile instanceof File ? entry.pendingFile : null;
+                const hasStoredFile = entry.storedFilePath && entry.storedFilePath.trim() !== '';
+
+                sanitized.storedFilePath = hasStoredFile ? entry.storedFilePath : '';
+
+                if (pendingFile) {
+                    if (pendingFile.size > 50 * 1024 * 1024) {
+                        Utils.showNotification(`Файл "${pendingFile.name}" занадто великий (максимум 50MB)`, 'error');
+                        validationFailed = true;
+                        return;
+                    }
+
+                    const fieldName = `extraFile_${extraFileIndex++}`;
+                    sanitized.fileField = fieldName;
+                    formData.append(fieldName, pendingFile, pendingFile.name);
+                    sanitized.originalName = pendingFile.name;
+                    sanitized.size = pendingFile.size;
+                    hasFileUploads = true;
+                } else if (hasStoredFile) {
+                    sanitized.originalName = entry.originalName || this.getFileDisplayName(entry.storedFilePath);
+                    sanitized.size = entry.size ? Number(entry.size) : null;
+                } else {
+                    if (!missingFileWarningShown) {
+                        Utils.showNotification('Для додаткового запису оберіть файл або змініть тип на посилання.', 'warning');
+                        missingFileWarningShown = true;
+                    }
+                    validationFailed = true;
+                    return;
+                }
+            }
+
+            sanitized.order = payload.length;
+            payload.push(sanitized);
+        });
+
+        if (validationFailed) {
+            return null;
+        }
+
+        return { payload, hasFileUploads };
     }
 
     normalizeUrl(url, fieldName = '') {
@@ -1556,6 +2273,23 @@ class MyProfilePage {
             return;
         }
 
+        if (inputId === 'customLogo') {
+            if (!file) {
+                this.uploadedFiles.customLogo = null;
+                this.updateCustomLogoStatus();
+                this.updateCustomLogoPreview();
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                Utils.showNotification(`Логотип занадто великий (${this.formatFileSize(file.size)}). Максимальний розмір 10MB.`, 'error');
+                event.target.value = '';
+                this.uploadedFiles.customLogo = null;
+                this.updateCustomLogoStatus();
+                this.updateCustomLogoPreview();
+                return;
+            }
+        }
+
         if (!file) return;
 
         const reader = new FileReader();
@@ -1637,6 +2371,11 @@ class MyProfilePage {
                     const base64 = fileDataUrl.split(',')[1];
                     this.profileData.socialBgImage = base64;
                 }
+            } else if (inputId === 'customLogo') {
+                this.uploadedFiles.customLogo = fileDataUrl;
+                this.updateCustomLogoStatus();
+                this.updateCustomLogoPreview();
+                return;
             }
             
             // Don't show notification here - it will be shown after successful save
@@ -1676,6 +2415,10 @@ class MyProfilePage {
             Utils.showLoading('Збереження профілю...');
             
             const formData = this.createFormData();
+            if (!formData) {
+                console.warn('Form submission cancelled due to validation errors.');
+                return;
+            }
             
             // Log file uploads
             const fileInputs = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'fileUploadInput'];
@@ -1756,12 +2499,13 @@ class MyProfilePage {
                     background: null,
                     blockImage: null,
                     socialBgImage: null,
+                    customLogo: null,
                     file: null
                 };
                 this.pendingFileAttachment = null;
                 
                 // Clear file inputs
-                const fileInputs = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'fileUploadInput'];
+                const fileInputs = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'customLogo', 'fileUploadInput'];
                 fileInputs.forEach(id => {
                     const input = document.getElementById(id);
                     if (input) {
@@ -1770,6 +2514,7 @@ class MyProfilePage {
                 });
 
                 this.updateFileUploadStatus();
+                this.updateCustomLogoStatus();
                 
                 // Save lightweight profile to localStorage for persistence
                 this.cacheProfileLocally(this.profileData);
@@ -1837,7 +2582,8 @@ class MyProfilePage {
             'reddit', 'whatsapp', 'viber',
             'dou', 'olx', 'amazon', 'prom', 'fhunt', 'dj',
             'privatBank', 'monoBank', 'alfaBank', 'abank', 'pumbBank', 'raiffeisenBank', 'senseBank',
-            'binance', 'trustWallet'
+            'binance', 'trustWallet',
+            'customLogoPosition', 'customLogoSize'
         ];
         
         fields.forEach(field => {
@@ -1872,7 +2618,7 @@ class MyProfilePage {
         });
         
         // Add file uploads
-        const fileFields = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'fileUploadInput'];
+        const fileFields = ['avatar', 'background', 'blockImage', 'blockImage2', 'socialBgImage', 'customLogo', 'fileUploadInput'];
         let hasFiles = false;
         fileFields.forEach(field => {
             const input = document.getElementById(field);
@@ -1905,8 +2651,20 @@ class MyProfilePage {
             }).length}`);
         }
         
+        const extraLinksResult = this.buildExtraLinksPayload(formData);
+        if (extraLinksResult === null) {
+            return null;
+        }
+
+        if (extraLinksResult.hasFileUploads) {
+            hasFiles = true;
+        }
+
+        formData.append('extraLinks', JSON.stringify(extraLinksResult.payload));
+        
         // Log FormData contents (can't directly inspect, but we can log what we added)
         console.log('FormData created with files:', hasFiles);
+        console.log('Extra links payload:', extraLinksResult.payload);
         
         return formData;
     }
@@ -1924,6 +2682,7 @@ class MyProfilePage {
             block_image,
             socialBgImage,
             socialBg_image,
+            customLogo,
             ...rest
         } = profile;
 

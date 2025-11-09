@@ -1,7 +1,7 @@
 -- SQL запит для створення таблиць для функціоналу компаній/груп
 -- Виконайте цей запит в phpMyAdmin
 
-USE `bionrgg`;
+USE `u743896667_bionrgg`;
 
 -- Таблиця компаній
 CREATE TABLE IF NOT EXISTS `companies` (

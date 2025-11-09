@@ -2,8 +2,8 @@
 -- Виконайте цей запит в phpMyAdmin
 
 -- Створення бази даних
-CREATE DATABASE IF NOT EXISTS `bionrgg` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `bionrgg`;
+CREATE DATABASE IF NOT EXISTS `u743896667_bionrgg` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `u743896667_bionrgg`;
 
 -- Таблиця користувачів (логіни та паролі)
 CREATE TABLE IF NOT EXISTS `users` (

@@ -1,8 +1,8 @@
 -- Bionrgg Database Schema v2
 -- Виконайте цей скрипт у phpMyAdmin або через консоль MySQL для повного розгортання оновленої структури.
 
-CREATE DATABASE IF NOT EXISTS `bionrgg` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `bionrgg`;
+CREATE DATABASE IF NOT EXISTS `u743896667_bionrgg` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `u743896667_bionrgg`;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `profile_layouts`;

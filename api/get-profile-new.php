@@ -33,6 +33,14 @@ try {
     $stmt->close();
     $conn->close();
     
+    $profileExtraLinks = [];
+    if (!empty($profile['extraLinks'])) {
+        $decodedExtraLinks = json_decode($profile['extraLinks'], true);
+        if (is_array($decodedExtraLinks)) {
+            $profileExtraLinks = $decodedExtraLinks;
+        }
+    }
+    
     // Формируем ответ
     $response = [
         'success' => true,
@@ -97,7 +105,12 @@ try {
             'socialTextColor' => $profile['socialTextColor'] ?? '#ffffff',
             'socialOpacity' => (int)($profile['socialOpacity'] ?? 90),
             'profileBgType' => $profile['profileBgType'] ?? 'color',
-            'socialBgType' => $profile['socialBgType'] ?? 'color'
+            'socialBgType' => $profile['socialBgType'] ?? 'color',
+            'customLogo' => $profile['customLogo'] ?? null,
+            'customLogoPosition' => $profile['customLogoPosition'] ?? 'none',
+            'customLogoSize' => isset($profile['customLogoSize']) ? (int)$profile['customLogoSize'] : 90,
+            'customLogoPath' => $profile['customLogo'] ?? '',
+            'extraLinks' => $profileExtraLinks
         ]
     ];
     

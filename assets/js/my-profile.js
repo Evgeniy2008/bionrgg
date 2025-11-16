@@ -41,6 +41,7 @@ class MyProfilePage {
         this.checkAuthentication();
         this.setupEventListeners();
         this.loadProfile();
+        this.setupCollapsibleSections();
     }
 
     checkAuthentication() {
@@ -433,14 +434,14 @@ class MyProfilePage {
                 // Load company info if user is in a company
                 this.loadCompanyInfo();
             } else {
-                console.error('Error loading profile:', data.message);
-                // Try alternative approach - load from localStorage if available
-                this.tryLoadFromLocalStorage();
+                const message = (data && data.message) ? data.message : 'Помилка завантаження профілю';
+                console.error('Error loading profile:', message);
+                Utils.showNotification(message, 'error');
             }
         } catch (error) {
             console.error('Error loading profile:', error);
-            // Try alternative approach - load from localStorage if available
-            this.tryLoadFromLocalStorage();
+            const message = error && error.message ? error.message : 'Помилка завантаження профілю';
+            Utils.showNotification(message, 'error');
         }
     }
 
@@ -828,17 +829,11 @@ class MyProfilePage {
                 Utils.showNotification('Profile loaded from cache. Some features may be limited.', 'warning');
             } else {
                 console.log('No profile data found in localStorage');
-                Utils.showNotification('Створіть новий профіль', 'info');
-                setTimeout(() => {
-                    window.location.href = 'create.html';
-                }, 2000);
+                Utils.showNotification('Профіль не знайдено. Створіть новий профіль або перевірте базу даних.', 'info');
             }
         } catch (error) {
             console.error('Error loading from localStorage:', error);
-            Utils.showNotification('Створіть новий профіль', 'info');
-            setTimeout(() => {
-                window.location.href = 'create.html';
-            }, 2000);
+            Utils.showNotification('Профіль не знайдено. Створіть новий профіль або перевірте базу даних.', 'info');
         }
     }
 
@@ -897,36 +892,56 @@ class MyProfilePage {
         if (textOpacity < 2) textOpacity = 2;
         if (textBgOpacity < 2) textBgOpacity = 2;
         
-        document.getElementById('profileOpacity').value = profileOpacity;
-        document.getElementById('textOpacity').value = textOpacity;
-        document.getElementById('textBgOpacity').value = textBgOpacity;
+        const profileOpacityInput = document.getElementById('profileOpacity');
+        const textOpacityInput = document.getElementById('textOpacity');
+        const textBgOpacityInput = document.getElementById('textBgOpacity');
+        if (profileOpacityInput) profileOpacityInput.value = profileOpacity;
+        if (textOpacityInput) textOpacityInput.value = textOpacity;
+        if (textBgOpacityInput) textBgOpacityInput.value = textBgOpacity;
         
         // Update opacity values display
-        document.getElementById('profileOpacityValue').textContent = profileOpacity + '%';
-        document.getElementById('textOpacityValue').textContent = textOpacity + '%';
-        document.getElementById('textBgOpacityValue').textContent = textBgOpacity + '%';
-
-        // Social media - Popular Platforms
-        document.getElementById('instagram').value = this.profileData.instagram || this.profileData.inst || '';
-        document.getElementById('youtube').value = this.profileData.youtube || '';
-        document.getElementById('tiktok').value = this.profileData.tiktok || '';
-        document.getElementById('facebook').value = this.profileData.facebook || this.profileData.fb || '';
-        document.getElementById('x').value = this.profileData.x || '';
-        document.getElementById('linkedin').value = this.profileData.linkedin || '';
+        const profileOpacityValueEl = document.getElementById('profileOpacityValue');
+        const textOpacityValueEl = document.getElementById('textOpacityValue');
+        const textBgOpacityValueEl = document.getElementById('textBgOpacityValue');
+        if (profileOpacityValueEl) profileOpacityValueEl.textContent = profileOpacity + '%';
+        if (textOpacityValueEl) textOpacityValueEl.textContent = textOpacity + '%';
+        if (textBgOpacityValueEl) textBgOpacityValueEl.textContent = textBgOpacity + '%';
+    
+        // Social media - Popular Platforms (legacy static fields; guard in case they are removed)
+        const instagramInput = document.getElementById('instagram');
+        if (instagramInput) instagramInput.value = this.profileData.instagram || this.profileData.inst || '';
+        const youtubeInput = document.getElementById('youtube');
+        if (youtubeInput) youtubeInput.value = this.profileData.youtube || '';
+        const tiktokInput = document.getElementById('tiktok');
+        if (tiktokInput) tiktokInput.value = this.profileData.tiktok || '';
+        const facebookInput = document.getElementById('facebook');
+        if (facebookInput) facebookInput.value = this.profileData.facebook || this.profileData.fb || '';
+        const xInput = document.getElementById('x');
+        if (xInput) xInput.value = this.profileData.x || '';
+        const linkedinInput = document.getElementById('linkedin');
+        if (linkedinInput) linkedinInput.value = this.profileData.linkedin || '';
         
         // Gaming & Streaming
-        document.getElementById('twitch').value = this.profileData.twitch || '';
-        document.getElementById('steam').value = this.profileData.steam || '';
-        document.getElementById('discord').value = this.profileData.discord || '';
-        document.getElementById('telegram').value = this.profileData.telegram || this.profileData.tg || '';
+        const twitchInput = document.getElementById('twitch');
+        if (twitchInput) twitchInput.value = this.profileData.twitch || '';
+        const steamInput = document.getElementById('steam');
+        if (steamInput) steamInput.value = this.profileData.steam || '';
+        const discordInput = document.getElementById('discord');
+        if (discordInput) discordInput.value = this.profileData.discord || '';
+        const telegramInput = document.getElementById('telegram');
+        if (telegramInput) telegramInput.value = this.profileData.telegram || this.profileData.tg || '';
         
         // Music & Audio
-        document.getElementById('spotify').value = this.profileData.spotify || '';
-        document.getElementById('soundcloud').value = this.profileData.soundcloud || '';
+        const spotifyInput = document.getElementById('spotify');
+        if (spotifyInput) spotifyInput.value = this.profileData.spotify || '';
+        const soundcloudInput = document.getElementById('soundcloud');
+        if (soundcloudInput) soundcloudInput.value = this.profileData.soundcloud || '';
         
         // Development & Tech
-        document.getElementById('github').value = this.profileData.github || '';
-        document.getElementById('site').value = this.profileData.site || '';
+        const githubInput = document.getElementById('github');
+        if (githubInput) githubInput.value = this.profileData.github || '';
+        const siteInput = document.getElementById('site');
+        if (siteInput) siteInput.value = this.profileData.site || '';
 
         // Documents & Files
         const googleDocsInput = document.getElementById('googleDocs');
@@ -947,34 +962,54 @@ class MyProfilePage {
         this.setExtraLinks(profileExtraLinks);
         
         // Freelance & Work
-        document.getElementById('upwork').value = this.profileData.upwork || '';
-        document.getElementById('fiverr').value = this.profileData.fiverr || '';
-        document.getElementById('djinni').value = this.profileData.djinni || '';
+        const upworkInput = document.getElementById('upwork');
+        if (upworkInput) upworkInput.value = this.profileData.upwork || '';
+        const fiverrInput = document.getElementById('fiverr');
+        if (fiverrInput) fiverrInput.value = this.profileData.fiverr || '';
+        const djinniInput = document.getElementById('djinni');
+        if (djinniInput) djinniInput.value = this.profileData.djinni || '';
         
         // Other Platforms
-        document.getElementById('reddit').value = this.profileData.reddit || '';
-        document.getElementById('whatsapp').value = this.profileData.whatsapp || '';
+        const redditInput = document.getElementById('reddit');
+        if (redditInput) redditInput.value = this.profileData.reddit || '';
+        const whatsappInput = document.getElementById('whatsapp');
+        if (whatsappInput) whatsappInput.value = this.profileData.whatsapp || '';
         
         // New platforms
-        document.getElementById('dou').value = this.profileData.dou || '';
-        document.getElementById('olx').value = this.profileData.olx || '';
-        document.getElementById('amazon').value = this.profileData.amazon || '';
-        document.getElementById('prom').value = this.profileData.prom || '';
-        document.getElementById('fhunt').value = this.profileData.fhunt || '';
-        document.getElementById('dj').value = this.profileData.dj || '';
+        const douInput = document.getElementById('dou');
+        if (douInput) douInput.value = this.profileData.dou || '';
+        const olxInput = document.getElementById('olx');
+        if (olxInput) olxInput.value = this.profileData.olx || '';
+        const amazonInput = document.getElementById('amazon');
+        if (amazonInput) amazonInput.value = this.profileData.amazon || '';
+        const promInput = document.getElementById('prom');
+        if (promInput) promInput.value = this.profileData.prom || '';
+        const fhuntInput = document.getElementById('fhunt');
+        if (fhuntInput) fhuntInput.value = this.profileData.fhunt || '';
+        const djInput = document.getElementById('dj');
+        if (djInput) djInput.value = this.profileData.dj || '';
         
         // Banks
-        document.getElementById('privatBank').value = this.profileData.privatBank || '';
-        document.getElementById('monoBank').value = this.profileData.monoBank || '';
-        document.getElementById('alfaBank').value = this.profileData.alfaBank || '';
-        document.getElementById('abank').value = this.profileData.abank || '';
-        document.getElementById('pumbBank').value = this.profileData.pumbBank || '';
-        document.getElementById('raiffeisenBank').value = this.profileData.raiffeisenBank || '';
-        document.getElementById('senseBank').value = this.profileData.senseBank || '';
+        const privatInput = document.getElementById('privatBank');
+        if (privatInput) privatInput.value = this.profileData.privatBank || '';
+        const monoInput = document.getElementById('monoBank');
+        if (monoInput) monoInput.value = this.profileData.monoBank || '';
+        const alfaInput = document.getElementById('alfaBank');
+        if (alfaInput) alfaInput.value = this.profileData.alfaBank || '';
+        const abankInput = document.getElementById('abank');
+        if (abankInput) abankInput.value = this.profileData.abank || '';
+        const pumbInput = document.getElementById('pumbBank');
+        if (pumbInput) pumbInput.value = this.profileData.pumbBank || '';
+        const raifInput = document.getElementById('raiffeisenBank');
+        if (raifInput) raifInput.value = this.profileData.raiffeisenBank || '';
+        const senseInput = document.getElementById('senseBank');
+        if (senseInput) senseInput.value = this.profileData.senseBank || '';
         
         // Cryptocurrency
-        document.getElementById('binance').value = this.profileData.binance || '';
-        document.getElementById('trustWallet').value = this.profileData.trustWallet || '';
+        const binanceInput = document.getElementById('binance');
+        if (binanceInput) binanceInput.value = this.profileData.binance || '';
+        const trustWalletInput = document.getElementById('trustWallet');
+        if (trustWalletInput) trustWalletInput.value = this.profileData.trustWallet || '';
 
         // Social customization
         const socialBgColorInput = document.getElementById('socialBgColor');
@@ -1718,6 +1753,71 @@ class MyProfilePage {
         }
     }
 
+    setupExtraLinkPicker() {
+        const picker = document.getElementById('extraLinkPicker');
+        const searchInput = document.getElementById('extraLinkSearch');
+        const platformsContainer = document.getElementById('extraLinkPlatforms');
+        const addBtn = document.getElementById('addExtraLinkBtn');
+
+        if (!picker || !searchInput || !platformsContainer || !addBtn) {
+            console.warn('Extra link picker elements not found');
+            return;
+        }
+
+        const platforms = this.getSocialPlatformDefinitions();
+
+        const renderPlatforms = (filter = '') => {
+            const term = filter.trim().toLowerCase();
+            const entries = Object.entries(platforms)
+                .filter(([key, platform]) => {
+                    if (!term) return true;
+                    const name = (platform.name || '').toLowerCase();
+                    return name.includes(term) || key.toLowerCase().includes(term);
+                });
+
+            platformsContainer.innerHTML = entries.map(([key, platform]) => `
+                <button type="button" class="extra-link-platform" data-platform="${key}">
+                    <img src="${platform.icon}" alt="${platform.name}" class="extra-link-platform-icon">
+                    <span class="extra-link-platform-name">${platform.name}</span>
+                </button>
+            `).join('');
+
+            platformsContainer.querySelectorAll('.extra-link-platform').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const platformKey = btn.dataset.platform;
+                    picker.style.display = 'none';
+                    this.addExtraLink({ platform: platformKey });
+                });
+            });
+        };
+
+        addBtn.addEventListener('click', () => {
+            if (picker.style.display === 'none' || picker.style.display === '') {
+                renderPlatforms();
+                picker.style.display = 'block';
+                searchInput.value = '';
+                searchInput.focus();
+            } else {
+                picker.style.display = 'none';
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            renderPlatforms(searchInput.value);
+        });
+    }
+
+    setupCollapsibleSections() {
+        const sections = document.querySelectorAll('.form-section.collapsible-section');
+        sections.forEach(section => {
+            const header = section.querySelector('h3');
+            if (!header) return;
+            header.addEventListener('click', () => {
+                section.classList.toggle('collapsed');
+            });
+        });
+    }
+
     initializeExtraLinksUI() {
         if (this.extraLinksInitialized) {
             return;
@@ -1735,10 +1835,7 @@ class MyProfilePage {
         this.extraLinkAddButton = addBtn;
         this.extraLinksInitialized = true;
 
-        addBtn.addEventListener('click', () => {
-            this.addExtraLink();
-        });
-
+        this.setupExtraLinkPicker();
         this.renderExtraLinks();
     }
 
@@ -1804,6 +1901,18 @@ class MyProfilePage {
         this.ensureExtraLinksInitialized();
 
         const entry = this.createExtraLinkDataObject(initialData);
+
+        // Авто-метка для дублей: Instagram, Instagram 2 и т.п.
+        if (entry.platform) {
+            const platforms = this.getSocialPlatformDefinitions();
+            const base = platforms[entry.platform];
+            const baseName = base ? base.name : entry.platform;
+            const duplicates = this.extraLinks.filter(e => e.platform === entry.platform && !e.removed);
+            if (duplicates.length >= 1) {
+                entry.label = `${baseName} ${duplicates.length + 1}`;
+            }
+        }
+
         this.extraLinks.push(entry);
 
         if (this.extraLinksContainer) {
@@ -1865,143 +1974,44 @@ class MyProfilePage {
         wrapper.className = 'extra-link-item';
         wrapper.dataset.entryId = entry.id;
 
+        const platforms = this.getSocialPlatformDefinitions();
+        const base = entry.platform ? platforms[entry.platform] : null;
+        const baseName = base ? base.name : (entry.label || 'Посилання');
+        const displayName = entry.label || baseName;
+        const iconSrc = base ? base.icon : (platforms.site ? platforms.site.icon : 'assets/img/site.png');
+
         wrapper.innerHTML = `
             <div class="extra-link-card">
                 <div class="extra-link-row">
-                    <div class="form-group" style="flex: none;">
-                        <label class="form-label">Платформа</label>
-                        <select class="form-input extra-link-platform"></select>
-                    </div>
-                    <div class="form-group" style="flex: none;">
-                        <label class="form-label">Тип</label>
-                        <select class="form-input extra-link-type">
-                            <option value="link">Посилання</option>
-                            <option value="file">Файл</option>
-                        </select>
-                    </div>
-                    <div class="form-group extra-link-remove-group" style="flex: none;">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="button" class="btn btn-danger extra-link-remove">Видалити</button>
-                    </div>
-                </div>
-                <div class="extra-link-body">
-                    <div class="form-group">
-                        <label class="form-label">Назва (опціонально)</label>
-                        <input type="text" class="form-input extra-link-label" placeholder="Наприклад: Основний Instagram">
-                    </div>
-                    <div class="form-group extra-link-url-group">
-                        <label class="form-label">Посилання</label>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">
+                            <img src="${iconSrc}" alt="${displayName}" class="form-icon">
+                            <span>${displayName}</span>
+                        </label>
                         <input type="url" class="form-input extra-link-url" placeholder="https://">
                     </div>
-                    <div class="form-group extra-link-file-group">
-                        <label class="form-label">Файл</label>
-                        <div class="file-upload">
-                            <input type="file" class="file-input extra-link-file-input" id="${entry.id}-file-input">
-                            <label for="${entry.id}-file-input" class="file-label">
-                                <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7,10 12,15 17,10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                                <span class="file-text">Вибрати файл</span>
-                            </label>
-                        </div>
-                        <div class="form-help extra-link-file-status"></div>
+                    <div class="form-group extra-link-remove-group" style="flex: 0 0 auto;">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-danger extra-link-remove">Видалити</button>
                     </div>
                 </div>
             </div>
         `;
 
-        const platformSelect = wrapper.querySelector('.extra-link-platform');
-        const labelInput = wrapper.querySelector('.extra-link-label');
-        const typeSelect = wrapper.querySelector('.extra-link-type');
+        // Всегда работаем как "посилання"
+        entry.type = 'link';
+
         const urlInput = wrapper.querySelector('.extra-link-url');
-        const fileGroup = wrapper.querySelector('.extra-link-file-group');
-        const urlGroup = wrapper.querySelector('.extra-link-url-group');
-        const fileInput = wrapper.querySelector('.extra-link-file-input');
-        const fileStatus = wrapper.querySelector('.extra-link-file-status');
         const removeBtn = wrapper.querySelector('.extra-link-remove');
 
-        const options = this.getExtraLinkPlatformOptions()
-            .map((option) => `<option value="${option.value}">${option.label}</option>`)
-            .join('');
-        platformSelect.innerHTML = options;
-        platformSelect.value = entry.platform || '';
-
-        labelInput.value = entry.label || '';
-        typeSelect.value = entry.type;
         urlInput.value = entry.url || '';
-
-        const applyTypeState = () => {
-            if (entry.type === 'file') {
-                urlGroup.style.display = 'none';
-                fileGroup.style.display = 'block';
-            } else {
-                urlGroup.style.display = 'block';
-                fileGroup.style.display = 'none';
-            }
-        };
-
-        platformSelect.addEventListener('change', (event) => {
-            entry.platform = event.target.value;
-            this.updatePreview();
-        });
-
-        labelInput.addEventListener('input', (event) => {
-            entry.label = event.target.value;
-            this.updatePreview();
-        });
 
         urlInput.addEventListener('input', (event) => {
             entry.url = event.target.value;
             this.updatePreview();
         });
 
-        typeSelect.addEventListener('change', (event) => {
-            const previousType = entry.type;
-            entry.type = event.target.value === 'file' ? 'file' : 'link';
-
-            if (previousType === 'file' && entry.type === 'link') {
-                entry.pendingFile = null;
-                entry.storedFilePath = '';
-                entry.originalName = '';
-                entry.size = null;
-                if (fileInput) {
-                    fileInput.value = '';
-                }
-            }
-
-            applyTypeState();
-            this.updateExtraLinkFileStatus(entry, fileStatus);
-            this.updatePreview();
-        });
-
-        fileInput.addEventListener('change', (event) => {
-            const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
-
-            if (file) {
-                if (file.size > 50 * 1024 * 1024) {
-                    Utils.showNotification(`Файл "${file.name}" занадто великий (максимум 50MB)`, 'error');
-                    event.target.value = '';
-                    return;
-                }
-                entry.pendingFile = file;
-                entry.originalName = file.name;
-                entry.size = file.size;
-            } else {
-                entry.pendingFile = null;
-            }
-
-            this.updateExtraLinkFileStatus(entry, fileStatus);
-            this.updatePreview();
-        });
-
         removeBtn.addEventListener('click', () => {
-            const confirmRemoval = window.confirm('Видалити це посилання/файл?');
-            if (!confirmRemoval) {
-                return;
-            }
-
             const index = this.extraLinks.findIndex((item) => item.id === entry.id);
             if (index !== -1) {
                 this.extraLinks.splice(index, 1);
@@ -2016,13 +2026,7 @@ class MyProfilePage {
             this.updatePreview();
         });
 
-        applyTypeState();
-        this.updateExtraLinkFileStatus(entry, fileStatus);
-
         entry.element = wrapper;
-        entry.fileStatusEl = fileStatus;
-        entry.fileInputEl = fileInput;
-
         return wrapper;
     }
 
@@ -2556,10 +2560,6 @@ class MyProfilePage {
                     this.setupProfileLink();
                 }, 200);
                 
-                // Close editor after successful save
-                setTimeout(() => {
-                    this.closeEditor();
-                }, 500);
             } else {
                 console.error('Error updating profile:', data.message);
                 Utils.showNotification(data.message || 'Помилка оновлення профілю', 'error');

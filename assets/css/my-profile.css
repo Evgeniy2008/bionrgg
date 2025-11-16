@@ -235,6 +235,55 @@
     margin-bottom: 0.75rem;
 }
 
+.extra-link-picker {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+.extra-link-platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+    max-height: 260px;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+}
+
+.extra-link-platform {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    font-size: var(--font-size-sm);
+}
+
+.extra-link-platform:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.extra-link-platform-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.extra-link-platform-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .extra-link-file-group .file-upload {
     margin-bottom: 0.5rem;
 }
@@ -458,6 +507,56 @@ button[type="button"].template-btn span,
     color: var(--text-muted);
 }
 
+/* Design accordion */
+ .design-section-body {
+    margin-top: 1rem;
+}
+
+.form-subsection {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-subsection:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+/* Generic collapsible sections */
+.collapsible-section h3 {
+    cursor: pointer;
+}
+
+.collapsible-section h3::after {
+    content: '▾';
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.collapsible-section.collapsed h3::after {
+    transform: rotate(-90deg);
+}
+
+ .collapsible-body {
+    margin-top: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.collapsible-section:not(.collapsed) .collapsible-body {
+    max-height: 2000px; /* достаточно большое значение для контента */
+    opacity: 1;
+}
+
+.collapsible-section h3:hover {
+    color: var(--primary-color);
+}
+
 /* Иконки социальных сетей остаются оригинальными */
 
 .social-category .form-label {
@@ -632,7 +731,7 @@ button[type="button"].template-btn span,
 
 /* Profile Preview - Exact copy of global profile */
 .profile-preview-container {
-    min-height: 400px;
+    min-height: 0;
     height: auto;
     background: var(--bg-primary);
     display: flex;
@@ -647,6 +746,7 @@ button[type="button"].template-btn span,
     border-radius: var(--radius-xl);
     overflow: hidden;
     width: 100%;
+    max-width: 520px;
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -679,8 +779,8 @@ button[type="button"].template-btn span,
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
-    width: min(520px, 90vw);
-    max-width: 90vw;
+    width: 100%;
+    max-width: 520px;
     text-align: center;
     background-size: cover;
     background-position: center;
@@ -920,6 +1020,7 @@ button[type="button"].template-btn span,
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
 }
 
@@ -1601,7 +1702,7 @@ body.employee-mode .social-media-subsection {
     
     .profile-preview-card {
         padding: 1.75rem 1.25rem;
-        width: 90vw;
+        width: 76vw;
         max-width: 90vw;
         border-radius: var(--radius-lg);
     }
@@ -1804,11 +1905,13 @@ body.employee-mode .social-media-subsection {
     .profile-preview-container {
         padding: 0.75rem;
         border-radius: var(--radius-sm);
+        width: 100%;
+        max-width: 100%;
     }
     
     .profile-preview-card {
         padding: 1.25rem;
-        width: 90vw;
+        width: 80vw;
         max-width: 90vw;
     }
     .profile-preview-links {

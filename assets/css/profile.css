@@ -35,8 +35,8 @@
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
-    width: min(520px, 100%);
-    max-width: 100%;
+    width: min(520px, 90vw);
+    max-width: 90vw;
     text-align: center;
     margin: 0 auto;
 }
@@ -153,12 +153,12 @@
 
 .profile-company-name {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: inherit;
 }
 
 .profile-company-tagline {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-secondary);
 }
 
@@ -395,7 +395,8 @@
     
     .profile-card {
         padding: 1.75rem 1.25rem;
-        max-width: 100%;
+        width: 90vw;
+        max-width: 90vw;
         margin: 0 auto;
         border-radius: var(--radius-lg);
     }
@@ -474,6 +475,8 @@
     
     .profile-card {
         padding: 1.5rem 1rem;
+        width: 90vw;
+        max-width: 90vw;
         margin: 0 auto;
     }
     
@@ -488,7 +491,7 @@
     }
     
     .profile-info p {
-        font-size: var(--font-size-xs);
+        font-size: var(--font-size-sm);
     }
     
     .profile-stats {
@@ -506,8 +509,8 @@
     }
     
     .profile-link {
-        padding: 0.75rem 1rem;
-        font-size: var(--font-size-xs);
+        padding: 0.85rem 1.1rem;
+        font-size: var(--font-size-sm);
     }
 
     .profile-links {

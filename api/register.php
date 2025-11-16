@@ -65,6 +65,7 @@ try {
     ensureCoreSchema($conn);
     ensureCompanySchema($conn);
 
+    // Check username uniqueness
     $checkStmt = $conn->prepare("SELECT 1 FROM users WHERE username = ?");
     $checkStmt->bind_param('s', $username);
     $checkStmt->execute();
@@ -73,6 +74,18 @@ try {
         throw new Exception('Username already exists');
     }
     $checkStmt->close();
+
+    // If creating a company profile, ensure company name is unique
+    if ($profileType === 'company' && $companyName !== '') {
+        $companyCheckStmt = $conn->prepare("SELECT 1 FROM companies WHERE company_name = ?");
+        $companyCheckStmt->bind_param('s', $companyName);
+        $companyCheckStmt->execute();
+        if ($companyCheckStmt->get_result()->num_rows > 0) {
+            $companyCheckStmt->close();
+            throw new Exception('Company with this name already exists');
+        }
+        $companyCheckStmt->close();
+    }
 
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
     if ($passwordHash === false) {

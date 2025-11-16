@@ -1,6 +1,6 @@
 <?
 
-$connectDB = new mysqli("localhost", "u743896667_bionrgg", "Godzila#9145", "u743896667_bionrgg");
+$connectDB = new mysqli("localhost", "root", "root", "bionrgg");
 if($connectDB->connect_error){
     die("Ошибка: " . $connectDB->connect_error);
 }

@@ -679,8 +679,8 @@ button[type="button"].template-btn span,
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
-    width: min(520px, 100%);
-    max-width: 100%;
+    width: min(520px, 90vw);
+    max-width: 90vw;
     text-align: center;
     background-size: cover;
     background-position: center;
@@ -813,13 +813,13 @@ button[type="button"].template-btn span,
 }
 
 .preview-company-name {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: inherit;
 }
 
 .preview-company-tagline {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
 }
 
@@ -1601,7 +1601,8 @@ body.employee-mode .social-media-subsection {
     
     .profile-preview-card {
         padding: 1.75rem 1.25rem;
-        max-width: 100%;
+        width: 90vw;
+        max-width: 90vw;
         border-radius: var(--radius-lg);
     }
     
@@ -1617,12 +1618,12 @@ body.employee-mode .social-media-subsection {
     }
     
     .profile-preview-name {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-lg);
         margin-bottom: 0.25rem;
     }
     
     .profile-preview-description {
-        font-size: var(--font-size-xs);
+        font-size: var(--font-size-sm);
         margin-bottom: 0.75rem;
     }
     
@@ -1647,8 +1648,8 @@ body.employee-mode .social-media-subsection {
     }
     
     .profile-preview-link {
-        padding: 0.625rem 0.75rem;
-        font-size: var(--font-size-xs);
+        padding: 0.75rem 0.9rem;
+        font-size: var(--font-size-sm);
         white-space: nowrap;
     }
     
@@ -1807,6 +1808,8 @@ body.employee-mode .social-media-subsection {
     
     .profile-preview-card {
         padding: 1.25rem;
+        width: 90vw;
+        max-width: 90vw;
     }
     .profile-preview-links {
         grid-template-columns: 1fr;

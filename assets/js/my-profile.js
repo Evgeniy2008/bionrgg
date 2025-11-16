@@ -33,7 +33,7 @@ class MyProfilePage {
         if (this.mode === 'employee') {
             document.body.classList.add('employee-mode');
         }
-        this.init();
+        this.init(); 
     }
 
     init() {
@@ -1310,6 +1310,21 @@ class MyProfilePage {
                     previewDescription.style.setProperty('border-radius', '4px', 'important');
                     previewDescription.style.setProperty('box-decoration-break', 'clone', 'important');
                 }
+                // Apply same text background to company name and tagline in preview
+                const previewCompanyNameEl = document.getElementById('previewCompanyName');
+                const previewCompanyTaglineEl = document.getElementById('previewCompanyTagline');
+                if (previewCompanyNameEl) {
+                    previewCompanyNameEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                    previewCompanyNameEl.style.setProperty('padding', '4px 8px', 'important');
+                    previewCompanyNameEl.style.setProperty('border-radius', '4px', 'important');
+                    previewCompanyNameEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                }
+                if (previewCompanyTaglineEl) {
+                    previewCompanyTaglineEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                    previewCompanyTaglineEl.style.setProperty('padding', '4px 8px', 'important');
+                    previewCompanyTaglineEl.style.setProperty('border-radius', '4px', 'important');
+                    previewCompanyTaglineEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                }
             } else {
                 // Remove text background if disabled or not set
                 if (previewName) {
@@ -1323,6 +1338,20 @@ class MyProfilePage {
                     previewDescription.style.removeProperty('padding');
                     previewDescription.style.removeProperty('border-radius');
                     previewDescription.style.removeProperty('box-decoration-break');
+                }
+                const previewCompanyNameEl = document.getElementById('previewCompanyName');
+                const previewCompanyTaglineEl = document.getElementById('previewCompanyTagline');
+                if (previewCompanyNameEl) {
+                    previewCompanyNameEl.style.setProperty('background-color', 'transparent', 'important');
+                    previewCompanyNameEl.style.removeProperty('padding');
+                    previewCompanyNameEl.style.removeProperty('border-radius');
+                    previewCompanyNameEl.style.removeProperty('box-decoration-break');
+                }
+                if (previewCompanyTaglineEl) {
+                    previewCompanyTaglineEl.style.setProperty('background-color', 'transparent', 'important');
+                    previewCompanyTaglineEl.style.removeProperty('padding');
+                    previewCompanyTaglineEl.style.removeProperty('border-radius');
+                    previewCompanyTaglineEl.style.removeProperty('box-decoration-break');
                 }
             }
             
@@ -1839,18 +1868,18 @@ class MyProfilePage {
         wrapper.innerHTML = `
             <div class="extra-link-card">
                 <div class="extra-link-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: none;">
                         <label class="form-label">Платформа</label>
                         <select class="form-input extra-link-platform"></select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="flex: none;">
                         <label class="form-label">Тип</label>
                         <select class="form-input extra-link-type">
                             <option value="link">Посилання</option>
                             <option value="file">Файл</option>
                         </select>
                     </div>
-                    <div class="form-group extra-link-remove-group">
+                    <div class="form-group extra-link-remove-group" style="flex: none;">
                         <label class="form-label">&nbsp;</label>
                         <button type="button" class="btn btn-danger extra-link-remove">Видалити</button>
                     </div>

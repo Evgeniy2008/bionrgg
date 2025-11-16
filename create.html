@@ -51,32 +51,8 @@
                 </div>
 
                 <div class="create-profile-layout">
-                    <!-- Profile Preview -->
-                    <div class="profile-preview-section">
-                        <div class="preview-header">
-                            <h3>Перегляд профілю</h3>
-                            <p>Подивіться, як ваш профіль виглядає</p>
-                        </div>
-                        <div class="profile-preview-container" id="profilePreviewContainer">
-                            <div class="profile-preview-card" id="profilePreviewCard">
-                                <div class="profile-preview-header">
-                                    <div class="profile-preview-avatar" id="previewAvatar">
-                                        <img src="assets/img/profile.png" alt="Avatar" id="previewAvatarImg">
-                                    </div>
-                                    <div class="profile-preview-info">
-                                        <h1 class="profile-preview-name" id="previewName">Ваше ім'я</h1>
-                                        <p class="profile-preview-description" id="previewDescription">Ваш опис профілю</p>
-                                    </div>
-                                </div>
-                                <div class="profile-preview-links" id="previewLinks">
-                                    <!-- Preview links will be loaded here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Registration Form -->
-                    <form class="registration-form" id="registrationForm">
+                    <form class="registration-form" id="registrationForm" method="post" action="api/register.php" enctype="multipart/form-data">
                     <div class="form-section">
                         <h3 class="section-title">Основна інформація</h3>
                         
@@ -394,52 +370,6 @@
                                     Trust Wallet
                                 </label>
                                 <input type="text" id="trustWallet" name="trustWallet" class="form-input" placeholder="Адреса гаманця">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Дизайн профілю</h3>
-                        
-                        <div class="design-grid">
-                            <div class="form-group">
-                                <label for="profileColor" class="form-label">Колір профілю</label>
-                                <input type="color" id="profileColor" name="profileColor" class="form-color" value="#2572ad">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="textColor" class="form-label">Колір тексту</label>
-                                <input type="color" id="textColor" name="textColor" class="form-color" value="#ffffff">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="avatar" class="form-label">Аватар</label>
-                            <div class="file-upload">
-                                <input type="file" id="avatar" name="avatar" class="file-input" accept="image/*">
-                                <label for="avatar" class="file-label">
-                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="7,10 12,15 17,10"/>
-                                        <line x1="12" y1="15" x2="12" y2="3"/>
-                                    </svg>
-                                    <span class="file-text">Вибрати зображення</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="background" class="form-label">Фон профілю</label>
-                            <div class="file-upload">
-                                <input type="file" id="background" name="background" class="file-input" accept="image/*">
-                                <label for="background" class="file-label">
-                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="7,10 12,15 17,10"/>
-                                        <line x1="12" y1="15" x2="12" y2="3"/>
-                                    </svg>
-                                    <span class="file-text">Вибрати зображення</span>
-                                </label>
                             </div>
                         </div>
                     </div>

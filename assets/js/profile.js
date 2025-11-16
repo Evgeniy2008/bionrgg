@@ -286,6 +286,8 @@ class ProfileViewer {
                 
                 const nameEl = document.getElementById('profileName');
                 const descEl = document.getElementById('profileDescription');
+                const companyNameEl = document.getElementById('profileCompanyName');
+                const companyTaglineEl = document.getElementById('profileCompanyTagline');
                 
                 if (nameEl) {
                     nameEl.style.setProperty('background-color', textBgColorRgba, 'important');
@@ -308,11 +310,27 @@ class ProfileViewer {
                 } else {
                     console.error('❌ profileDescription element not found!');
                 }
+                
+                if (companyNameEl) {
+                    companyNameEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                    companyNameEl.style.setProperty('padding', '4px 8px', 'important');
+                    companyNameEl.style.setProperty('border-radius', '4px', 'important');
+                    companyNameEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                }
+                
+                if (companyTaglineEl) {
+                    companyTaglineEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                    companyTaglineEl.style.setProperty('padding', '4px 8px', 'important');
+                    companyTaglineEl.style.setProperty('border-radius', '4px', 'important');
+                    companyTaglineEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                }
             } else {
                 console.log('⚠️ No text background color set, clearing styles');
                 // Remove text background if not set
                 const nameEl = document.getElementById('profileName');
                 const descEl = document.getElementById('profileDescription');
+                const companyNameEl = document.getElementById('profileCompanyName');
+                const companyTaglineEl = document.getElementById('profileCompanyTagline');
                 
                 if (nameEl) {
                     nameEl.style.removeProperty('background-color');
@@ -325,6 +343,18 @@ class ProfileViewer {
                     descEl.style.removeProperty('padding');
                     descEl.style.removeProperty('border-radius');
                     descEl.style.removeProperty('box-decoration-break');
+                }
+                if (companyNameEl) {
+                    companyNameEl.style.removeProperty('background-color');
+                    companyNameEl.style.removeProperty('padding');
+                    companyNameEl.style.removeProperty('border-radius');
+                    companyNameEl.style.removeProperty('box-decoration-break');
+                }
+                if (companyTaglineEl) {
+                    companyTaglineEl.style.removeProperty('background-color');
+                    companyTaglineEl.style.removeProperty('padding');
+                    companyTaglineEl.style.removeProperty('border-radius');
+                    companyTaglineEl.style.removeProperty('box-decoration-break');
                 }
             }
         }, 100);
@@ -346,6 +376,8 @@ class ProfileViewer {
                 
                 const nameEl = document.getElementById('profileName');
                 const descEl = document.getElementById('profileDescription');
+                const companyNameEl = document.getElementById('profileCompanyName');
+                const companyTaglineEl = document.getElementById('profileCompanyTagline');
                 
                 if (nameEl) {
                     const currentBg = window.getComputedStyle(nameEl).backgroundColor;
@@ -366,6 +398,26 @@ class ProfileViewer {
                         descEl.style.setProperty('padding', '4px 8px', 'important');
                         descEl.style.setProperty('border-radius', '4px', 'important');
                         descEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                    }
+                }
+                
+                if (companyNameEl) {
+                    const currentBg = window.getComputedStyle(companyNameEl).backgroundColor;
+                    if (currentBg === 'rgba(0, 0, 0, 0)' || currentBg === 'transparent') {
+                        companyNameEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                        companyNameEl.style.setProperty('padding', '4px 8px', 'important');
+                        companyNameEl.style.setProperty('border-radius', '4px', 'important');
+                        companyNameEl.style.setProperty('box-decoration-break', 'clone', 'important');
+                    }
+                }
+                
+                if (companyTaglineEl) {
+                    const currentBg = window.getComputedStyle(companyTaglineEl).backgroundColor;
+                    if (currentBg === 'rgba(0, 0, 0, 0)' || currentBg === 'transparent') {
+                        companyTaglineEl.style.setProperty('background-color', textBgColorRgba, 'important');
+                        companyTaglineEl.style.setProperty('padding', '4px 8px', 'important');
+                        companyTaglineEl.style.setProperty('border-radius', '4px', 'important');
+                        companyTaglineEl.style.setProperty('box-decoration-break', 'clone', 'important');
                     }
                 }
             }

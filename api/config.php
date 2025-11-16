@@ -89,11 +89,11 @@ if (!defined('BIONRGG_BOOTSTRAPPED')) {
     });
 }
 
-// Конфигурация базы данных
+// Конфигурация базы данных (локальная разработка)
 define('DB_HOST', 'localhost');
-define('DB_USER', 'u743896667_bionrgg');
-define('DB_PASS', 'Godzila#9145');
-define('DB_NAME', 'u743896667_bionrgg');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
+define('DB_NAME', 'bionrgg');
 
 function clearAllOutputBuffers(): void {
     while (ob_get_level() > 0) {

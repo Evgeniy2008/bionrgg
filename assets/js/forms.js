@@ -1,16 +1,6 @@
 // Utility functions
 class Utils {
     static showNotification(message, type = 'info') {
-        if (type === 'error') {
-            const text = (message || '').toString().toLowerCase();
-            const allowedKeywords = ['парол', 'password', 'лог', 'login', 'увій', 'auth', 'авториз'];
-            const shouldShowError = allowedKeywords.some(keyword => text.includes(keyword));
-            if (!shouldShowError) {
-                console.warn('Suppressed error notification:', message);
-                return;
-            }
-        }
-
         // Remove existing notifications to prevent stacking
         const existingNotifications = document.querySelectorAll('.notification');
         existingNotifications.forEach(n => {
@@ -516,31 +506,18 @@ class FormHandler {
                 body: this.createFormData(data, files)
             });
 
-            // Check if response is ok
-            if (!response.ok) {
-                let errorMessage = 'Помилка реєстрації';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {
-                    errorMessage = `Помилка сервера: ${response.status} ${response.statusText}`;
-                }
-                Utils.showNotification(errorMessage, 'error');
-                return;
-            }
-
-            // Try to parse JSON response
-            let result;
+            // Try to parse JSON response regardless of HTTP status
+            let result = null;
             try {
                 const text = await response.text();
-                result = JSON.parse(text);
+                result = text ? JSON.parse(text) : null;
             } catch (error) {
                 console.error('Invalid JSON response:', error);
                 Utils.showNotification('Помилка: сервер повернув некоректну відповідь', 'error');
                 return;
             }
 
-            if (result.success) {
+            if (result && result.success) {
                 // Show success notification
                 if (result.company && result.company.company_key) {
                     Utils.showNotification('Профіль компанії успішно створено!', 'success');
@@ -587,22 +564,28 @@ class FormHandler {
                     window.location.href = 'my-profile.html';
                 }, 2000);
             } else {
-                console.error('Registration error:', result.message);
+                const message = result && result.message ? result.message : 'Помилка реєстрації';
+                console.error('Registration error:', message);
                 // Show error to user
-                Utils.showNotification(result.message || 'Помилка реєстрації', 'error');
+                Utils.showNotification(message, 'error');
                 
                 // Show specific field errors if available
-                if (result.message && result.message.toLowerCase().includes('username')) {
-                    this.showFieldError(document.getElementById('username'), false, result.message);
+                if (message.toLowerCase().includes('username')) {
+                    this.showFieldError(document.getElementById('username'), false, message);
                 }
-                if (result.message && result.message.toLowerCase().includes('password')) {
-                    this.showFieldError(document.getElementById('password'), false, result.message);
+                if (message.toLowerCase().includes('password')) {
+                    this.showFieldError(document.getElementById('password'), false, message);
+                }
+                if (message.toLowerCase().includes('company')) {
+                    const companyNameField = document.getElementById('companyName');
+                    if (companyNameField) {
+                        this.showFieldError(companyNameField, false, message);
+                    }
                 }
             }
         } catch (error) {
             console.error('Registration error:', error);
-                // Don't show error to user
-                console.log('Connection error');
+            Utils.showNotification('Помилка з\'єднання. Спробуйте ще раз.', 'error');
         }
     }
 

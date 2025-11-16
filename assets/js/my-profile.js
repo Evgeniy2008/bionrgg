@@ -423,10 +423,22 @@ class MyProfilePage {
                 };
                 this.pendingFileAttachment = null;
                 
-                this.populateForm();
+                // Use setTimeout to ensure DOM is ready, especially if form is in collapsed section
+                setTimeout(() => {
+                    try {
+                        this.populateForm();
+                    } catch (e) {
+                        console.error('Error in populateForm (delayed):', e);
+                    }
+                }, 100);
+                
                 // Use setTimeout to ensure DOM is ready
                 setTimeout(() => {
-                    this.updatePreview();
+                    try {
+                        this.updatePreview();
+                    } catch (e) {
+                        console.warn('Error updating preview:', e);
+                    }
                 }, 200);
                 this.setupProfileLink();
                 console.log('Profile loaded successfully');
@@ -838,30 +850,53 @@ class MyProfilePage {
     }
 
     populateForm() {
-        console.log('Populating form with data:', this.profileData);
-        
-        if (!this.profileData) {
-            console.log('No profile data to populate form');
-            return;
-        }
+        try {
+            console.log('Populating form with data:', this.profileData);
+            
+            if (!this.profileData) {
+                console.log('No profile data to populate form');
+                return;
+            }
+
+            // Проверяем, что форма существует в DOM
+            const profileForm = document.getElementById('profileForm');
+            if (!profileForm) {
+                console.warn('Profile form not found in DOM, skipping form population');
+                return;
+            }
 
         // Basic information
         const usernameDisplay = document.getElementById('usernameDisplay');
         if (usernameDisplay) {
             usernameDisplay.textContent = this.profileData.username || 'Unknown';
         }
-        document.getElementById('description').value = this.profileData.description || this.profileData.descr || '';
+        
+        const descriptionInput = document.getElementById('description');
+        if (descriptionInput) {
+            descriptionInput.value = this.profileData.description || this.profileData.descr || '';
+        }
 
         const companyPositionInput = document.getElementById('companyPosition');
         if (companyPositionInput) {
             companyPositionInput.value = this.profileData.companyTagline || '';
         }
 
-        this.updateCompanyPositionFieldVisibility();
+        try {
+            this.updateCompanyPositionFieldVisibility();
+        } catch (e) {
+            console.warn('Error updating company position field visibility:', e);
+        }
 
         // Colors - try both old and new field names for compatibility
-        document.getElementById('profileColor').value = this.profileData.profileColor || this.profileData.color || '#c27eef';
-        document.getElementById('textColor').value = this.profileData.textColor || this.profileData.colorText || '#ffffff';
+        const profileColorInput = document.getElementById('profileColor');
+        if (profileColorInput) {
+            profileColorInput.value = this.profileData.profileColor || this.profileData.color || '#c27eef';
+        }
+        
+        const textColorInput = document.getElementById('textColor');
+        if (textColorInput) {
+            textColorInput.value = this.profileData.textColor || this.profileData.colorText || '#ffffff';
+        }
         
         // Text background color (optional) - check if enabled
         const textBgColor = this.profileData.textBgColor || '';
@@ -895,9 +930,24 @@ class MyProfilePage {
         const profileOpacityInput = document.getElementById('profileOpacity');
         const textOpacityInput = document.getElementById('textOpacity');
         const textBgOpacityInput = document.getElementById('textBgOpacity');
-        if (profileOpacityInput) profileOpacityInput.value = profileOpacity;
-        if (textOpacityInput) textOpacityInput.value = textOpacity;
-        if (textBgOpacityInput) textBgOpacityInput.value = textBgOpacity;
+        
+        if (!profileOpacityInput) {
+            console.warn('profileOpacity input not found in DOM');
+        } else {
+            profileOpacityInput.value = profileOpacity;
+        }
+        
+        if (!textOpacityInput) {
+            console.warn('textOpacity input not found in DOM');
+        } else {
+            textOpacityInput.value = textOpacity;
+        }
+        
+        if (!textBgOpacityInput) {
+            console.warn('textBgOpacity input not found in DOM');
+        } else {
+            textBgOpacityInput.value = textBgOpacity;
+        }
         
         // Update opacity values display
         const profileOpacityValueEl = document.getElementById('profileOpacityValue');
@@ -956,10 +1006,19 @@ class MyProfilePage {
         if (fileUploadField) {
             fileUploadField.value = this.profileData.fileUpload || '';
         }
-        this.updateFileUploadStatus();
+        
+        try {
+            this.updateFileUploadStatus();
+        } catch (e) {
+            console.warn('Error updating file upload status:', e);
+        }
 
-        const profileExtraLinks = this.getExtraLinksFromProfile(this.profileData);
-        this.setExtraLinks(profileExtraLinks);
+        try {
+            const profileExtraLinks = this.getExtraLinksFromProfile(this.profileData);
+            this.setExtraLinks(profileExtraLinks);
+        } catch (e) {
+            console.warn('Error setting extra links:', e);
+        }
         
         // Freelance & Work
         const upworkInput = document.getElementById('upwork');
@@ -1056,15 +1115,36 @@ class MyProfilePage {
             this.customLogoSizeValueEl.textContent = customLogoSize;
         }
 
-        this.updateCustomLogoStatus();
+        try {
+            this.updateCustomLogoStatus();
+        } catch (e) {
+            console.warn('Error updating custom logo status:', e);
+        }
 
         // Update character counter
-        this.updateCharacterCounter();
+        try {
+            this.updateCharacterCounter();
+        } catch (e) {
+            console.warn('Error updating character counter:', e);
+        }
         
         // Force update preview after form is populated
         setTimeout(() => {
-            this.updatePreview();
+            try {
+                this.updatePreview();
+            } catch (e) {
+                console.warn('Error updating preview:', e);
+            }
         }, 100);
+        } catch (error) {
+            console.error('Error in populateForm:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                profileData: this.profileData
+            });
+            // Не прерываем выполнение, просто логируем ошибку
+        }
     }
 
     updateFileUploadStatus() {
@@ -1534,63 +1614,63 @@ class MyProfilePage {
     getSocialPlatformDefinitions() {
         return {
             // Popular Platforms
-            instagram: { name: 'Instagram', icon: 'assets/img/insta.png' },
-            youtube: { name: 'YouTube', icon: 'assets/img/youtube.png' },
-            tiktok: { name: 'TikTok', icon: 'assets/img/tiktok.png' },
-            facebook: { name: 'Facebook', icon: 'assets/img/facebook.png' },
-            x: { name: 'X (Twitter)', icon: 'assets/img/x.png' },
-            linkedin: { name: 'LinkedIn', icon: 'assets/img/linkedin.png' },
+            instagram: { name: 'Instagram', icon: 'assets/img/insta.png', category: 'social' },
+            youtube: { name: 'YouTube', icon: 'assets/img/youtube.png', category: 'social' },
+            tiktok: { name: 'TikTok', icon: 'assets/img/tiktok.png', category: 'social' },
+            facebook: { name: 'Facebook', icon: 'assets/img/facebook.png', category: 'social' },
+            x: { name: 'X (Twitter)', icon: 'assets/img/x.png', category: 'social' },
+            linkedin: { name: 'LinkedIn', icon: 'assets/img/linkedin.png', category: 'social' },
+            reddit: { name: 'Reddit', icon: 'assets/img/reddit.png', category: 'social' },
             
             // Messaging & Chats
-            telegram: { name: 'Telegram', icon: 'assets/img/tg.png' },
-            whatsapp: { name: 'WhatsApp', icon: 'assets/img/whatsapp.png' },
-            viber: { name: 'Viber', icon: 'assets/img/viber.png' },
-            discord: { name: 'Discord', icon: 'assets/img/discord.png' },
+            telegram: { name: 'Telegram', icon: 'assets/img/tg.png', category: 'messenger' },
+            whatsapp: { name: 'WhatsApp', icon: 'assets/img/whatsapp.png', category: 'messenger' },
+            viber: { name: 'Viber', icon: 'assets/img/viber.png', category: 'messenger' },
+            discord: { name: 'Discord', icon: 'assets/img/discord.png', category: 'messenger' },
             
             // Gaming & Streaming
-            twitch: { name: 'Twitch', icon: 'assets/img/twitch.png' },
-            steam: { name: 'Steam', icon: 'assets/img/steam.png' },
+            twitch: { name: 'Twitch', icon: 'assets/img/twitch.png', category: 'gaming' },
+            steam: { name: 'Steam', icon: 'assets/img/steam.png', category: 'gaming' },
             
             // Music & Audio
-            spotify: { name: 'Spotify', icon: 'assets/img/spotify.png' },
-            soundcloud: { name: 'SoundCloud', icon: 'assets/img/soundcloud.png' },
-            youtubeMusic: { name: 'YouTube Music', icon: 'assets/img/youtubeMusic.png' },
+            spotify: { name: 'Spotify', icon: 'assets/img/spotify.png', category: 'music' },
+            soundcloud: { name: 'SoundCloud', icon: 'assets/img/soundcloud.png', category: 'music' },
+            youtubeMusic: { name: 'YouTube Music', icon: 'assets/img/youtubeMusic.png', category: 'music' },
             
             // Development & Tech
-            github: { name: 'GitHub', icon: 'assets/img/github.png' },
-            site: { name: 'Website', icon: 'assets/img/site.png' },
+            github: { name: 'GitHub', icon: 'assets/img/github.png', category: 'tech' },
+            site: { name: 'Website', icon: 'assets/img/site.png', category: 'tech' },
             
             // Documents & Files
-            googleDocs: { name: 'Google Docs', icon: 'assets/img/google docs.png' },
-            googleSheets: { name: 'Google Sheets', icon: 'assets/img/googlesheets.png' },
-            fileUpload: { name: 'Файл', icon: 'assets/img/file.png' },
+            googleDocs: { name: 'Google Docs', icon: 'assets/img/google docs.png', category: 'documents' },
+            googleSheets: { name: 'Google Sheets', icon: 'assets/img/googlesheets.png', category: 'documents' },
+            fileUpload: { name: 'Файл', icon: 'assets/img/file.png', category: 'documents' },
             
             // Freelance & Work
-            upwork: { name: 'Upwork', icon: 'assets/img/upwork.png' },
-            fiverr: { name: 'Fiverr', icon: 'assets/img/fiverr.png' },
-            djinni: { name: 'Djinni', icon: 'assets/img/djinni.png' },
+            upwork: { name: 'Upwork', icon: 'assets/img/upwork.png', category: 'work' },
+            fiverr: { name: 'Fiverr', icon: 'assets/img/fiverr.png', category: 'work' },
+            djinni: { name: 'Djinni', icon: 'assets/img/djinni.png', category: 'work' },
+            dou: { name: 'DOU', icon: 'assets/img/dou.png', category: 'work' },
             
             // Other Platforms
-            reddit: { name: 'Reddit', icon: 'assets/img/reddit.png' },
-            dou: { name: 'DOU', icon: 'assets/img/dou.png' },
-            olx: { name: 'OLX', icon: 'assets/img/olx.png' },
-            amazon: { name: 'Amazon', icon: 'assets/img/amazon.png' },
-            prom: { name: 'Prom.ua', icon: 'assets/img/prom.png' },
-            fhunt: { name: 'FHunt', icon: 'assets/img/fhunt.png' },
-            dj: { name: 'DJ', icon: 'assets/img/dj.png' },
+            olx: { name: 'OLX', icon: 'assets/img/olx.png', category: 'marketplace' },
+            amazon: { name: 'Amazon', icon: 'assets/img/amazon.png', category: 'marketplace' },
+            prom: { name: 'Prom.ua', icon: 'assets/img/prom.png', category: 'marketplace' },
+            fhunt: { name: 'FHunt', icon: 'assets/img/fhunt.png', category: 'marketplace' },
+            dj: { name: 'DJ', icon: 'assets/img/dj.png', category: 'marketplace' },
             
             // Banks
-            privatBank: { name: 'ПриватБанк', icon: 'assets/img/privatBank.png' },
-            monoBank: { name: 'Монобанк', icon: 'assets/img/monoBank.png' },
-            alfaBank: { name: 'Альфа-Банк', icon: 'assets/img/alfaBank.png' },
-            abank: { name: 'А-Банк', icon: 'assets/img/abank.png' },
-            pumbBank: { name: 'ПУМБ', icon: 'assets/img/pumbBank.png' },
-            raiffeisenBank: { name: 'Райффайзен Банк', icon: 'assets/img/raiffeisenBank.png' },
-            senseBank: { name: 'Sense Bank', icon: 'assets/img/senseBank.png' },
+            privatBank: { name: 'ПриватБанк', icon: 'assets/img/privatBank.png', category: 'bank' },
+            monoBank: { name: 'Монобанк', icon: 'assets/img/monoBank.png', category: 'bank' },
+            alfaBank: { name: 'Альфа-Банк', icon: 'assets/img/alfaBank.png', category: 'bank' },
+            abank: { name: 'А-Банк', icon: 'assets/img/abank.png', category: 'bank' },
+            pumbBank: { name: 'ПУМБ', icon: 'assets/img/pumbBank.png', category: 'bank' },
+            raiffeisenBank: { name: 'Райффайзен Банк', icon: 'assets/img/raiffeisenBank.png', category: 'bank' },
+            senseBank: { name: 'Sense Bank', icon: 'assets/img/senseBank.png', category: 'bank' },
             
             // Cryptocurrency Exchanges
-            binance: { name: 'Binance', icon: 'assets/img/binance.png' },
-            trustWallet: { name: 'Trust Wallet', icon: 'assets/img/trustWallet.png' }
+            binance: { name: 'Binance', icon: 'assets/img/binance.png', category: 'crypto' },
+            trustWallet: { name: 'Trust Wallet', icon: 'assets/img/trustWallet.png', category: 'crypto' }
         };
     }
 
@@ -1758,22 +1838,144 @@ class MyProfilePage {
         const searchInput = document.getElementById('extraLinkSearch');
         const platformsContainer = document.getElementById('extraLinkPlatforms');
         const addBtn = document.getElementById('addExtraLinkBtn');
+        const categoryFilters = document.getElementById('extraLinkCategoryFilters');
 
         if (!picker || !searchInput || !platformsContainer || !addBtn) {
             console.warn('Extra link picker elements not found');
             return;
         }
 
-        const platforms = this.getSocialPlatformDefinitions();
+        if (!categoryFilters) {
+            console.error('Category filters container not found! Element #extraLinkCategoryFilters is missing in DOM');
+            return;
+        }
 
-        const renderPlatforms = (filter = '') => {
+        console.log('Setting up category filters...');
+
+        const platforms = this.getSocialPlatformDefinitions();
+        
+        // Категории для фильтров
+        const categories = {
+            'all': 'Всі',
+            'social': 'Соціальні мережі',
+            'messenger': 'Месенджери',
+            'gaming': 'Ігри та стримінг',
+            'music': 'Музика',
+            'tech': 'Технології',
+            'documents': 'Документи та файли',
+            'work': 'Робота та фріланс',
+            'marketplace': 'Маркетплейси',
+            'bank': 'Банки',
+            'crypto': 'Криптовалюта'
+        };
+
+        let selectedCategories = new Set(['all']);
+
+        // Функция для создания фильтров категорий
+        const createCategoryFilters = () => {
+            if (!categoryFilters) {
+                console.error('Cannot create filters: categoryFilters element is null');
+                return;
+            }
+            
+            console.log('Creating category filters...', categoryFilters);
+            
+            const filtersHTML = Object.entries(categories).map(([key, label]) => {
+                const isActive = selectedCategories.has(key);
+                return `
+                    <button type="button" class="category-filter-btn ${isActive ? 'active' : ''}" data-category="${key}">
+                        ${label}
+                    </button>
+                `;
+            }).join('');
+            
+            categoryFilters.innerHTML = filtersHTML;
+            console.log('Category filters HTML created, buttons count:', Object.keys(categories).length);
+
+            categoryFilters.querySelectorAll('.category-filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.dataset.category;
+                    
+                    if (category === 'all') {
+                        // Если кликнули на "Всі", сбрасываем все фильтры
+                        selectedCategories.clear();
+                        selectedCategories.add('all');
+                        categoryFilters.querySelectorAll('.category-filter-btn').forEach(b => {
+                            b.classList.toggle('active', b.dataset.category === 'all');
+                        });
+                    } else {
+                        // Убираем "Всі" если выбрана другая категория
+                        selectedCategories.delete('all');
+                        const allBtn = categoryFilters.querySelector('[data-category="all"]');
+                        if (allBtn) {
+                            allBtn.classList.remove('active');
+                        }
+                        
+                        // Переключаем выбранную категорию
+                        if (selectedCategories.has(category)) {
+                            // Убираем из выбранных
+                            selectedCategories.delete(category);
+                            btn.classList.remove('active');
+                            console.log('Filter deselected:', category);
+                        } else {
+                            // Добавляем в выбранные
+                            selectedCategories.add(category);
+                            btn.classList.add('active');
+                            console.log('Filter selected:', category);
+                        }
+                        
+                        // Если ничего не выбрано, выбираем "Всі"
+                        if (selectedCategories.size === 0) {
+                            selectedCategories.add('all');
+                            if (allBtn) {
+                                allBtn.classList.add('active');
+                            }
+                        }
+                    }
+                    
+                    // Обновляем визуальное состояние всех кнопок
+                    categoryFilters.querySelectorAll('.category-filter-btn').forEach(b => {
+                        const cat = b.dataset.category;
+                        if (selectedCategories.has(cat)) {
+                            b.classList.add('active');
+                        } else {
+                            b.classList.remove('active');
+                        }
+                    });
+                    
+                    console.log('Selected categories:', Array.from(selectedCategories));
+                    renderPlatforms(searchInput.value, selectedCategories);
+                });
+            });
+        };
+
+        // Создаем фильтры при инициализации
+        createCategoryFilters();
+        console.log('Category filters initialized');
+
+        const renderPlatforms = (filter = '', categoriesSet = new Set(['all'])) => {
             const term = filter.trim().toLowerCase();
             const entries = Object.entries(platforms)
                 .filter(([key, platform]) => {
+                    // Фильтр по категориям (можно выбрать несколько)
+                    if (categoriesSet.has('all')) {
+                        // Если выбрано "Всі", показываем все
+                    } else {
+                        // Иначе показываем только выбранные категории
+                        if (!categoriesSet.has(platform.category)) {
+                            return false;
+                        }
+                    }
+                    // Фильтр по поиску
                     if (!term) return true;
                     const name = (platform.name || '').toLowerCase();
                     return name.includes(term) || key.toLowerCase().includes(term);
                 });
+
+            if (entries.length === 0) {
+                platformsContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-muted);">Нічого не знайдено</p>';
+                return;
+            }
 
             platformsContainer.innerHTML = entries.map(([key, platform]) => `
                 <button type="button" class="extra-link-platform" data-platform="${key}">
@@ -1793,7 +1995,22 @@ class MyProfilePage {
 
         addBtn.addEventListener('click', () => {
             if (picker.style.display === 'none' || picker.style.display === '') {
-                renderPlatforms();
+                // Убеждаемся, что элемент categoryFilters доступен
+                const currentCategoryFilters = document.getElementById('extraLinkCategoryFilters');
+                if (!currentCategoryFilters) {
+                    console.error('Category filters element not found when opening picker!');
+                }
+                
+                // Создаем фильтры заново при открытии (на случай если DOM изменился)
+                selectedCategories.clear();
+                selectedCategories.add('all');
+                createCategoryFilters();
+                
+                // Проверяем, что фильтры созданы
+                const filterButtons = categoryFilters.querySelectorAll('.category-filter-btn');
+                console.log('Filter buttons created:', filterButtons.length);
+                
+                renderPlatforms('', selectedCategories);
                 picker.style.display = 'block';
                 searchInput.value = '';
                 searchInput.focus();
@@ -1803,7 +2020,7 @@ class MyProfilePage {
         });
 
         searchInput.addEventListener('input', () => {
-            renderPlatforms(searchInput.value);
+            renderPlatforms(searchInput.value, selectedCategories);
         });
     }
 

@@ -518,6 +518,8 @@ class FormHandler {
             }
 
             if (result && result.success) {
+                console.log('Registration successful:', result);
+                
                 // Show success notification
                 if (result.company && result.company.company_key) {
                     Utils.showNotification('Профіль компанії успішно створено!', 'success');
@@ -525,44 +527,54 @@ class FormHandler {
                     Utils.showNotification('Профіль успішно створено!', 'success');
                 }
                 
-                // Store user data
-                localStorage.setItem('userID', data.username);
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('password', data.password);
-                if (result.user && typeof result.user.id !== 'undefined') {
-                    localStorage.setItem('userNumericId', String(result.user.id));
+                // Store user data immediately
+                try {
+                    localStorage.setItem('userID', data.username);
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('password', data.password);
+                    
+                    if (result.user && typeof result.user.id !== 'undefined') {
+                        localStorage.setItem('userNumericId', String(result.user.id));
+                    }
+                    
+                    // Store company info if exists
+                    if (result.company) {
+                        localStorage.setItem('companyKey', result.company.company_key);
+                        localStorage.setItem('companyId', String(result.company.company_id));
+                    }
+                    
+                    // Store full profile data for editor
+                    const profileData = {
+                        username: data.username,
+                        password: data.password,
+                        description: data.description || '',
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    // Save profile data to localStorage and cookies
+                    localStorage.setItem('userProfile', JSON.stringify(profileData));
+                    this.setCookie('userProfile', JSON.stringify(profileData), 365);
+                    
+                    // Verify data was saved before redirecting
+                    const savedUserID = localStorage.getItem('userID');
+                    const savedPassword = localStorage.getItem('password');
+                    
+                    console.log('Saved userID:', savedUserID, 'Saved password:', savedPassword ? '***' : 'missing');
+                    
+                    if (savedUserID && savedPassword) {
+                        // Redirect to profile page
+                        setTimeout(() => {
+                            console.log('Redirecting to my-profile.html');
+                            window.location.href = 'my-profile.html';
+                        }, 1500);
+                    } else {
+                        console.error('Failed to save user data to localStorage');
+                        Utils.showNotification('Помилка збереження даних. Спробуйте ще раз.', 'error');
+                    }
+                } catch (storageError) {
+                    console.error('localStorage error:', storageError);
+                    Utils.showNotification('Помилка збереження даних. Перевірте налаштування браузера.', 'error');
                 }
-                
-                // Store company info if exists
-                if (result.company) {
-                    localStorage.setItem('companyKey', result.company.company_key);
-                    localStorage.setItem('companyId', result.company.company_id);
-                }
-                
-                // Store full profile data for editor
-                const profileData = {
-                    username: data.username,
-                    password: data.password,
-                    description: data.description || '',
-                    instagram: data.instagram || '',
-                    discord: data.discord || '',
-                    facebook: data.facebook || '',
-                    steam: data.steam || '',
-                    twitch: data.twitch || '',
-                    tiktok: data.tiktok || '',
-                    telegram: data.telegram || '',
-                    youtube: data.youtube || '',
-                    created_at: new Date().toISOString()
-                };
-                
-                // Save profile data to localStorage and cookies
-                localStorage.setItem('userProfile', JSON.stringify(profileData));
-                this.setCookie('userProfile', JSON.stringify(profileData), 365);
-                
-                // Redirect to profile page
-                setTimeout(() => {
-                    window.location.href = 'my-profile.html';
-                }, 2000);
             } else {
                 const message = result && result.message ? result.message : 'Помилка реєстрації';
                 console.error('Registration error:', message);

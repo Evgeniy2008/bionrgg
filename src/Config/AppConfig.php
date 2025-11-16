@@ -40,9 +40,9 @@ final class AppConfig
         }
 
         $host = $_ENV['DB_HOST'] ?? 'localhost';
-        $user = $_ENV['DB_USER'] ?? 'root';
-        $password = $_ENV['DB_PASS'] ?? $_ENV['DB_PASSWORD'] ?? 'root';
-        $name = $_ENV['DB_NAME'] ?? 'bionrgg';
+        $user = $_ENV['DB_USER'] ?? 'u743896667_bionrgg';
+        $password = $_ENV['DB_PASS'] ?? $_ENV['DB_PASSWORD'] ?? 'Godzila#9145';
+        $name = $_ENV['DB_NAME'] ?? 'u743896667_bionrgg';
         $charset = $_ENV['DB_CHARSET'] ?? 'utf8mb4';
 
         return new self($host, $user, $password, $name, $charset);

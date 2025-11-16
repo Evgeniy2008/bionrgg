@@ -243,6 +243,56 @@
     border: 1px solid var(--border-color);
 }
 
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+    min-height: 40px;
+    align-items: flex-start;
+}
+
+.category-filter-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.5rem;
+    background: #3b82f6;
+    border: 2px solid transparent;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    opacity: 0.85;
+}
+
+.category-filter-btn:hover {
+    background: #2563eb;
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.category-filter-btn.active {
+    background: #1e40af;
+    border-color: #1e3a8a;
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.5), 0 0 0 2px rgba(30, 64, 175, 0.2);
+    transform: translateY(-1px);
+    font-weight: 700;
+}
+
+.category-filter-btn.active:hover {
+    background: #1e3a8a;
+    border-color: #1e3a8a;
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.6), 0 0 0 3px rgba(30, 58, 138, 0.3);
+    transform: translateY(-2px);
+}
+
 .extra-link-platforms {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -1853,6 +1903,131 @@ body.employee-mode .social-media-subsection {
     }
 }
 
+/* Адаптивность фильтров категорий на мобильных устройствах */
+@media (max-width: 768px) {
+    .category-filters {
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.4rem 0;
+        min-height: auto;
+    }
+    
+    .category-filter-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-filters {
+        gap: 0.35rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.35rem 0;
+        min-height: auto;
+        max-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(37, 99, 235, 0.3) transparent;
+    }
+    
+    .category-filters::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    .category-filters::-webkit-scrollbar-thumb {
+        background: rgba(37, 99, 235, 0.3);
+        border-radius: 2px;
+    }
+    
+    .category-filters::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .category-filter-btn {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-width: 1.5px;
+    }
+    
+    .category-filter-btn.active {
+        border-width: 2px;
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 390px) {
+    .category-filters {
+        gap: 0.3rem;
+        margin-top: 0.4rem;
+        margin-bottom: 0.4rem;
+        padding: 0.3rem 0;
+        min-height: auto;
+        max-height: 100px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    
+    .category-filter-btn {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-width: 1.5px;
+        border-radius: 0.4rem;
+    }
+    
+    .category-filter-btn.active {
+        border-width: 2px;
+        font-weight: 700;
+        padding: 0.4rem 0.65rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .category-filters {
+        gap: 0.25rem;
+        margin-top: 0.35rem;
+        margin-bottom: 0.35rem;
+        padding: 0.25rem 0;
+        max-height: 90px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .category-filter-btn {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.6875rem;
+        border-radius: 0.35rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .category-filters {
+        gap: 0.25rem;
+        margin-top: 0.3rem;
+        margin-bottom: 0.3rem;
+        padding: 0.25rem 0;
+        max-height: 85px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .category-filter-btn {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.675rem;
+        border-radius: 0.35rem;
+    }
+}
+
 @media (max-width: 480px) {
     .fixed-actions {
         bottom: 0;
@@ -2051,5 +2226,55 @@ body.employee-mode .social-media-subsection {
     .fixed-actions .btn svg {
         width: 16px;
         height: 16px;
+    }
+}
+
+/* Адаптивность для кнопки "Додати посилання або файл" на маленьких экранах */
+@media (max-width: 390px) {
+    #addExtraLinkBtn {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+        white-space: normal !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 380px) {
+    #addExtraLinkBtn {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 0.7rem 0.9rem !important;
+        font-size: 0.8125rem !important;
+        white-space: normal !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 375px) {
+    #addExtraLinkBtn {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 0.65rem 0.85rem !important;
+        font-size: 0.8rem !important;
+        white-space: normal !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word;
+        text-align: center;
+        box-sizing: border-box;
+        min-height: 44px; /* Минимальная высота для удобного нажатия */
     }
 }

@@ -9,7 +9,7 @@ $username = 'chupserso';
 echo "<h2>1. Проверка базы данных</h2>";
 
 try {
-    $connectDB = new mysqli("localhost", "root", "root", "bionrgg");
+    $connectDB = new mysqli("localhost", "u743896667_bionrgg", "Godzila#9145", "u743896667_bionrgg");
     
     if ($connectDB->connect_error) {
         throw new Exception("❌ Ошибка подключения к БД: " . $connectDB->connect_error);

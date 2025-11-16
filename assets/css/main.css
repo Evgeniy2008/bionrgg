@@ -808,7 +808,7 @@ body {
     
     .nav-link.active {
         color: var(--primary-color);
-        background: rgba(37, 99, 235, 0.1);
+        background: #6386ff;
         border-color: rgba(37, 99, 235, 0.3);
     }
     
